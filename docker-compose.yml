@@ -1,0 +1,9 @@
+version: '3.3'
+services:
+  server:
+    image: virtualwolf/pi-home-dashboard-server:latest
+    ports:
+      - ${PORT}:3000
+    restart: unless-stopped
+    volumes:
+      - ./config.json:/opt/service/config.json

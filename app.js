@@ -36,7 +36,9 @@ app.get('/', async(req, res) => {
 
         powerData = {
             consumption: (usage.body.load.instant_power/1000).toFixed(2),
-            production: (usage.body.solar.instant_power/1000).toFixed(2),
+            production: (usage.body.solar.instant_power/1000).toFixed(2) === '-0.00'
+                ? '0.00'
+                : (usage.body.solar.instant_power/1000).toFixed(2),
             battery: batteryPercentage.body.percentage.toFixed(0),
             batteryChargeState: usage.body.battery.instant_power === 0
                 ? 'idle'

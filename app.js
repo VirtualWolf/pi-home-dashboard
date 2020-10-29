@@ -24,13 +24,28 @@ app.get('/', async(req, res) => {
     }
 
     try {
-        const { body } = await request.get(config.power).timeout({response: 15000});
+        // Powerwall has a self-signed certificate hence the use of .disableTLSCerts()
+        const batteryPercentage = await request.get(`${config.power}/api/system_status/soe`)
+            .disableTLSCerts()
+            .timeout({response: 15000});
+
+
+        const usage = await request.get(`${config.power}/api/meters/aggregates`)
+            .timeout({response: 15000})
+            .disableTLSCerts();
+
         powerData = {
-            consumption: (body.consumption[0].wNow/1000).toFixed(2),
-            production: (body.production[0].wNow/1000).toFixed(2),
+            consumption: (usage.body.load.instant_power/1000).toFixed(2),
+            production: (usage.body.solar.instant_power/1000).toFixed(2),
+            battery: batteryPercentage.body.percentage.toFixed(0),
+            batteryChargeState: usage.body.battery.instant_power === 0
+                ? 'idle'
+                : usage.body.battery.instant_power > 0
+                    ? 'draining'
+                    : 'charging',
         }
     } catch (err) {
-        powerData = { consumption: '—', production: '—' }
+        powerData = { consumption: '—', production: '—', battery: '—', batteryChargeState: 'idle', }
     }
 
     return res.json({

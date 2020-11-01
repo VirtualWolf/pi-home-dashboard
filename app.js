@@ -10,14 +10,16 @@ app.get('/', async(req, res) => {
     let outdoorData, indoorData, powerData;
 
     try {
-        const { body } = await request.get(config.outdoor).timeout({response: 2000});
+        const { body } = await request.get(config.outdoor)
+            .timeout({response: 2000});
         outdoorData = body;
     } catch(err) {
         outdoorData = { temperature: '—', humidity: '—' };
     }
 
     try {
-        const { body } = await request.get(config.indoor).timeout({response: 2000});
+        const { body } = await request.get(config.indoor)
+            .timeout({response: 2000});
         indoorData = body;
     } catch (err) {
         indoorData = { temperature: '—', humidity: '—' };
@@ -27,11 +29,10 @@ app.get('/', async(req, res) => {
         // Powerwall has a self-signed certificate hence the use of .disableTLSCerts()
         const batteryPercentage = await request.get(`${config.power}/api/system_status/soe`)
             .disableTLSCerts()
-            .timeout({response: 15000});
-
+            .timeout({response: 5000});
 
         const usage = await request.get(`${config.power}/api/meters/aggregates`)
-            .timeout({response: 15000})
+            .timeout({response: 5000})
             .disableTLSCerts();
 
         powerData = {
@@ -39,7 +40,7 @@ app.get('/', async(req, res) => {
             production: (usage.body.solar.instant_power/1000).toFixed(2) === '-0.00'
                 ? '0.00'
                 : (usage.body.solar.instant_power/1000).toFixed(2),
-            battery: batteryPercentage.body.percentage.toFixed(0),
+            battery: batteryPercentage.body.percentage.toFixed(1),
             batteryChargeState: usage.body.battery.instant_power === 0
                 ? 'idle'
                 : usage.body.battery.instant_power > 0

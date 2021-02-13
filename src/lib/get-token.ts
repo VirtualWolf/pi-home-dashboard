@@ -8,21 +8,17 @@ export async function getToken(refresh = false) {
         return token;
     }
 
-    try {
-        const response = await request.post(`${config.power}/api/login/Basic`)
-            .send({
-                'username': 'customer',
-                'password': config.password,
-                "email": config.email,
-                "force_sm_off":true,
-            })
-            .disableTLSCerts()
-            .timeout(5000);
+    const response = await request.post(`${config.power}/api/login/Basic`)
+        .send({
+            'username': 'customer',
+            'password': config.password,
+            "email": config.email,
+            "force_sm_off":true,
+        })
+        .disableTLSCerts()
+        .timeout(10000);
 
-        token = response.body.token;
+    token = response.body.token;
 
-        return token;
-    } catch (err) {
-        console.error(`Failed to get a token: ${err.status} ${err.message}`);
-    }
+    return token;
 }

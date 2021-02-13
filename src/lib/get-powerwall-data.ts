@@ -14,16 +14,15 @@ export async function getPowerwallData(): Promise<PowerwallData> {
 
     try {
         // Powerwall has a self-signed certificate hence the use of .disableTLSCerts()
-        const [batteryPercentage, usage] = await Promise.all([
-            await request.get(`${config.power}/api/system_status/soe`)
-                .set('Cookie', `AuthCookie=${token}`)
-                .disableTLSCerts()
-                .timeout({response: 5000}),
-            await request.get(`${config.power}/api/meters/aggregates`)
-                .set('Cookie', `AuthCookie=${token}`)
-                .timeout({response: 5000})
-                .disableTLSCerts()
-        ]);
+        const batteryPercentage = await request.get(`${config.power}/api/system_status/soe`)
+            .set('Cookie', `AuthCookie=${token}`)
+            .disableTLSCerts()
+            .timeout({response: 5000});
+
+        const usage = await request.get(`${config.power}/api/meters/aggregates`)
+            .set('Cookie', `AuthCookie=${token}`)
+            .timeout({response: 5000})
+            .disableTLSCerts();
 
         return {
             consumption: (usage.body.load.instant_power/1000).toFixed(2),
@@ -51,8 +50,10 @@ export async function getPowerwallData(): Promise<PowerwallData> {
             try {
                 token = await getToken(true);
 
-                return await getPowerwallData();
+                return defaultPowerwallData;
             } catch (err) {
+                console.error(`Failed to get a token: ${err.status} ${err.message}`);
+
                 return defaultPowerwallData;
             }
         } else {

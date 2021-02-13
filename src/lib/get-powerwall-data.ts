@@ -38,22 +38,25 @@ export async function getPowerwallData(): Promise<PowerwallData> {
                     : 'charging',
         }
     } catch (err) {
+        const defaultPowerwallData = {
+            consumption: '—',
+            production: '—',
+            battery: '—',
+            batteryChargeState: 'idle',
+        };
+
         if (err.status === 401 || err.status === 403) {
-            console.log('Got an error, running getToken()');
+            console.warn('Access to API was forbidden, getting a new token...');
 
-            token = await getToken(true);
+            try {
+                token = await getToken(true);
 
-            console.log(token);
-            console.log('====');
-
-            return await getPowerwallData();
+                return await getPowerwallData();
+            } catch (err) {
+                return defaultPowerwallData;
+            }
         } else {
-            return {
-                consumption: '—',
-                production: '—',
-                battery: '—',
-                batteryChargeState: 'idle',
-            };
+            return defaultPowerwallData;
         }
     }
 }

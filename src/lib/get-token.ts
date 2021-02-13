@@ -23,6 +23,6 @@ export async function getToken(refresh = false) {
 
         return token;
     } catch (err) {
-        console.error(`Failed to get token: ${err.status} ${err.message}`);
+        console.error(`Failed to get a token: ${err.status} ${err.message}`);
     }
 }

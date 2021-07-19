@@ -1,0 +1,7 @@
+{
+    "outdoor": "http://outdoor",
+    "indoor": "http://indoor",
+    "power": "https://powerwall",
+    "email": "<powerwall-email-address>",
+    "password": "<powerwall-password>"
+}

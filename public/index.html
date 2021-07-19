@@ -1,0 +1,85 @@
+<html>
+    <head>
+        <title>Pi Home Dashboard</title>
+        <script src="/js/vue.global.prod-3.1.5.js" lang="javascript"></script>
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
+
+    <body id="dashboard">
+        <div class="temperature">
+            {{ data.outdoor.temperature }}&deg;
+        </div>
+
+        <div class="humidity">
+            {{ data.outdoor.humidity }}%
+        </div>
+
+        <div class="temperature">
+            {{ data.indoor.temperature }}&deg;
+        </div>
+
+        <div class="humidity">
+            {{ data.indoor.humidity }}%
+        </div>
+
+        <div class="power power-consumption">
+            <p class="power-heading">Consumption</p>
+
+            {{ data.power.consumption }}kW
+        </div>
+
+        <div class="power power-production">
+            <p class="power-heading">Production</p>
+
+            {{ data.power.production }}kW
+        </div>
+
+        <div class="power power-battery">
+            <p class="power-heading">Battery</p>
+
+            <span v-if="data.power.batteryChargeState === 'draining'" class="power-battery-draining">&#x2B07;</span>
+            <span v-if="data.power.batteryChargeState === 'charging'" class="power-battery-charging">&#x2B06;</span>
+            {{ data.power.batteryChargePercentage }}%
+        </div>
+    </body>
+
+    <script>
+        const Dashboard = {
+            data() {
+                return {
+                    data: {
+                        outdoor: {
+                            temperature: '—',
+                            humidity: '—',
+                        },
+                        indoor: {
+                            temperature: '—',
+                            humidity: '—',
+                        },
+                        power: {
+                            production: '—',
+                            consumption: '—',
+                            batteryChargePercentage: '—',
+                            batteryChargeState: '—',
+                        },
+                    },
+                };
+            },
+
+            async mounted() {
+                const fetchData = async () => {
+                    const response = await fetch('/api');
+                    const json = await response.json();
+
+                    this.data = json;
+                };
+
+                await fetchData();
+
+                setInterval(async () => await fetchData(), 60000);
+            }
+        }
+
+        Vue.createApp(Dashboard).mount('#dashboard')
+    </script>
+</html>

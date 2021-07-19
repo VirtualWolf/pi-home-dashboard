@@ -1,37 +1,23 @@
 import express from 'express';
-import cors from 'cors';
-import request from 'superagent';
+import { getSensorData } from './lib/get-sensor-data';
 import { getPowerwallData } from './lib/get-powerwall-data';
 const config = require('../config.json');
 
 const app = express();
-app.use(cors());
 
-app.get('/', async(req, res) => {
-    let outdoorData, indoorData;
+app.use(express.static('public'));
 
-    try {
-        const { body } = await request.get(config.outdoor)
-            .timeout({response: 2000});
-
-        outdoorData = body;
-    } catch(err) {
-        outdoorData = { temperature: '—', humidity: '—' };
-    }
-
-    try {
-        const { body } = await request.get(config.indoor)
-            .timeout({response: 2000});
-
-        indoorData = body;
-    } catch (err) {
-        indoorData = { temperature: '—', humidity: '—' };
-    }
+app.get('/api', async(req, res) => {
+    const [outdoorData, indoorData, powerwallData] = await Promise.all([
+        await getSensorData(config.outdoor),
+        await getSensorData(config.indoor),
+        await getPowerwallData(),
+    ]);
 
     return res.json({
         outdoor: outdoorData,
         indoor: indoorData,
-        power: await getPowerwallData(),
+        power: powerwallData,
     });
 });
 

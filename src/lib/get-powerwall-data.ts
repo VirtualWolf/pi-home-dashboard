@@ -5,7 +5,7 @@ const config = require('../../config.json');
 interface PowerwallData {
     consumption: number | string;
     production: number | string;
-    battery: number | string;
+    batteryChargePercentage: number | string;
     batteryChargeState: string;
 }
 
@@ -29,7 +29,7 @@ export async function getPowerwallData(): Promise<PowerwallData> {
             production: (usage.body.solar.instant_power/1000).toFixed(2) === '-0.00'
                 ? '0.00'
                 : (usage.body.solar.instant_power/1000).toFixed(2),
-            battery: batteryPercentage.body.percentage.toFixed(1),
+            batteryChargePercentage: batteryPercentage.body.percentage.toFixed(1),
             batteryChargeState: usage.body.battery.instant_power === 0
                 ? 'idle'
                 : usage.body.battery.instant_power > 0
@@ -40,7 +40,7 @@ export async function getPowerwallData(): Promise<PowerwallData> {
         const defaultPowerwallData = {
             consumption: '—',
             production: '—',
-            battery: '—',
+            batteryChargePercentage: '—',
             batteryChargeState: 'idle',
         };
 

@@ -67,16 +67,18 @@
             },
 
             async mounted() {
-                const fetchData = async () => {
+                await this.fetchData();
+
+                setInterval(async () => await this.fetchData(), 60000);
+            },
+
+            methods: {
+                async fetchData() {
                     const response = await fetch('/api');
                     const json = await response.json();
 
-                    this.data = json;
-                };
-
-                await fetchData();
-
-                setInterval(async () => await fetchData(), 60000);
+                    return this.data = json;
+                }
             }
         }
 

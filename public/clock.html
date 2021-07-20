@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <title>Pi Home Dashboard Clock</title>
+        <script src="/js/vue.global.prod-3.1.5.js" lang="javascript"></script>
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
+
+    <body id="clock">
+        <div id="grid">
+            {{ currentTime }}
+        </div>
+
+    </body>
+
+    <script>
+        const Clock = {
+            data() {
+                return {
+                    currentTime: '—',
+                };
+            },
+
+            mounted() {
+                this.getCurrentTime();
+
+                setInterval(() => this.getCurrentTime(), 1000);
+            },
+
+            methods: {
+                getCurrentTime() {
+                    const now = new Date();
+
+                    const hour = now.getHours();
+                    const minute = now.getMinutes().toString().padStart(2, 0);
+
+                    return this.currentTime = `${hour}:${minute}`;
+                }
+            }
+        }
+
+        Vue.createApp(Clock).mount('#clock');
+    </script>
+</html>

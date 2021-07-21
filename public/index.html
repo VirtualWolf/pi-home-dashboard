@@ -37,9 +37,10 @@
         <div class="power power-battery">
             <p class="power-heading">Battery</p>
 
-            <span v-if="data.power.batteryChargeState === 'draining'" class="power-battery-draining">&#x2B07;</span>
-            <span v-if="data.power.batteryChargeState === 'charging'" class="power-battery-charging">&#x2B06;</span>
-            {{ data.power.batteryChargePercentage }}%
+            <span
+                v-if="!data.power.batteryChargeState.match(/—|idle/)"
+                :class="chargeState"
+                v-html="chargeSymbol"></span>{{ data.power.batteryChargePercentage }}%
         </div>
     </body>
 
@@ -70,6 +71,20 @@
                 await this.fetchData();
 
                 setInterval(async () => await this.fetchData(), 60000);
+            },
+
+            computed: {
+                chargeState() {
+                    return {
+                        'power-battery-draining': this.data.power.batteryChargeState === 'draining',
+                        'power-battery-charging': this.data.power.batteryChargeState === 'charging',
+                    }
+                },
+                chargeSymbol() {
+                    return this.data.power.batteryChargeState === 'charging'
+                            ? '&#x2B06;'
+                            : '&#x2B07;';
+                },
             },
 
             methods: {

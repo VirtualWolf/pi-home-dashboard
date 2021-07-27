@@ -76,8 +76,25 @@ body {
 
 #clock {
     display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
+    grid-template-columns: 1fr 80px 1fr;
+    grid-template-areas: "hour divider minute";
     align-items: center;
     justify-items: center;
+    font-size: 292px;
+    height: 100vh;
+}
+
+.hour {
+    grid-area: "hour";
+    justify-self: right;
+}
+
+.divider {
+    grid-area: "divider";
+    justify-self: center;
+}
+
+.minute {
+    grid-area: "minute";
+    justify-self: left;
 }

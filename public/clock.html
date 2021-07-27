@@ -7,7 +7,9 @@
 
     <body>
         <div id="clock">
-            {{ currentTime }}
+            <div class="hour">{{ hour }}</div>
+            <div class="divider">:</div>
+            <div class="minute">{{ minute }}</div>
         </div>
 
     </body>
@@ -16,7 +18,8 @@
         const Clock = {
             data() {
                 return {
-                    currentTime: '—',
+                    hour: '00',
+                    minute: '00'
                 };
             },
 
@@ -30,10 +33,11 @@
                 getCurrentTime() {
                     const now = new Date();
 
-                    const hour = now.getHours();
+                    const hour = now.getHours().toString();
                     const minute = now.getMinutes().toString().padStart(2, 0);
 
-                    return this.currentTime = `${hour}:${minute}`;
+                    this.hour = hour;
+                    this.minute = minute;
                 }
             }
         }

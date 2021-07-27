@@ -1,9 +1,7 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-        sans-serif;
+    font-family: sans-serif;
     background-color: black;
     color: white;
     min-height: 100vh;
@@ -12,47 +10,60 @@ body {
 
 #dashboard {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-}
-
-.temperature {
-    font-size: 11em;
-    vertical-align: middle;
-    grid-column-start: 1;
-    grid-column-end: 5;
-    padding: 0 0 0 0.1em;
-    margin: 0;
-    line-height: 0.5em;
-}
-
-.humidity {
-    font-size: 8em;
-    vertical-align: middle;
-    text-align: right;
-    grid-column-start: 5;
-    grid-column-end: 7;
-}
-
-.power {
-    text-align: center;
-    font-size: 4em;
+    width: 100%;
+    height: 100%;
+    grid-template-areas:
+        "outdoor-temperature outdoor-temperature outdoor-humidity"
+        "indoor-temperature indoor-temperature indoor-humidity"
+        "consumption production battery-charge";
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: end;
     padding: 0;
     margin: 0;
 }
 
-.power-consumption {
-    grid-column-start: 1;
-    grid-column-end: 3;
+.outdoor-temperature   { grid-area: outdoor-temperature }
+.outdoor-humidity      { grid-area: outdoor-humidity }
+.indoor-temperature    { grid-area: indoor-temperature }
+.indoor-humidity       { grid-area: indoor-humidity }
+.consumption           { grid-area: consumption }
+.production            { grid-area: production }
+.battery-charge        { grid-area: battery-charge }
+
+.temperature {
+    align-self: end;
+    font-size: 192px;
+    line-height: 90%;
+    padding-left: 10px;
 }
 
-.power-production {
-    grid-column-start: 3;
-    grid-column-end: 5;
+.humidity {
+    font-size: 118px;
+    justify-self: right;
+    padding-right: 10px;
 }
 
-.power-battery {
-    grid-column-start: 5;
-    grid-column-end: 7;
+.consumption,
+.production,
+.battery-charge {
+    justify-self: center;
+    font-size: 72px;
+}
+
+.power {
+    text-align: center;
+    font-size: 36px;
+}
+
+.power-heading {
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.battery-charge-state-icon {
+    font-size: 90%;
 }
 
 .power-battery-draining {
@@ -63,24 +74,10 @@ body {
     color: #36B37E;
 }
 
-.power-heading {
-    font-weight: bold;
-    font-size: 0.5em;
-    padding: 0;
-    margin: 0;
-}
-
 #clock {
     display: grid;
     grid-template-columns: 1fr;
-}
-
-#grid {
-    grid-column-start: 1;
-    grid-column-end: 1;
-    font-size: 18em;
-    text-align: center;
-    vertical-align: middle;
-    padding: 0;
-    margin: 0;
+    grid-template-rows: 1fr;
+    align-items: center;
+    justify-items: center;
 }

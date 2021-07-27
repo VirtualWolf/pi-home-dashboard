@@ -5,43 +5,43 @@
         <link rel="stylesheet" href="/css/style.css">
     </head>
 
-    <body id="dashboard">
-        <div class="temperature">
-            {{ data.outdoor.temperature }}&deg;
+    <body>
+        <div id="dashboard">
+            <div class="outdoor-temperature temperature">
+                {{ data.outdoor.temperature }}&deg;
+            </div>
+
+            <div class="outdoor-humidity humidity">
+                {{ data.outdoor.humidity }}%
+            </div>
+
+            <div class="indoor-temperature temperature">
+                {{ data.indoor.temperature }}&deg;
+            </div>
+
+            <div class="indoor-humidity humidity">
+                {{ data.indoor.humidity }}%
+            </div>
+
+            <div class="consumption">
+                <div class="power-heading">Consumption</div>
+                {{ data.power.consumption }}kW
+            </div>
+
+            <div class="production">
+                <div class="power-heading">Production</div>
+                {{ data.power.production }}kW
+            </div>
+
+            <div class="battery-charge">
+                <div class="power-heading">Charge</div>
+                <span
+                    v-if="!data.power.batteryChargeState.match(/—|idle/)"
+                    :class="chargeState"
+                    v-html="chargeSymbol"></span>{{ data.power.batteryChargePercentage }}%
+            </div>
         </div>
 
-        <div class="humidity">
-            {{ data.outdoor.humidity }}%
-        </div>
-
-        <div class="temperature">
-            {{ data.indoor.temperature }}&deg;
-        </div>
-
-        <div class="humidity">
-            {{ data.indoor.humidity }}%
-        </div>
-
-        <div class="power power-consumption">
-            <p class="power-heading">Consumption</p>
-
-            {{ data.power.consumption }}kW
-        </div>
-
-        <div class="power power-production">
-            <p class="power-heading">Production</p>
-
-            {{ data.power.production }}kW
-        </div>
-
-        <div class="power power-battery">
-            <p class="power-heading">Battery</p>
-
-            <span
-                v-if="!data.power.batteryChargeState.match(/—|idle/)"
-                :class="chargeState"
-                v-html="chargeSymbol"></span>{{ data.power.batteryChargePercentage }}%
-        </div>
     </body>
 
     <script>
@@ -82,8 +82,8 @@
                 },
                 chargeSymbol() {
                     return this.data.power.batteryChargeState === 'charging'
-                            ? '&#x2B06;'
-                            : '&#x2B07;';
+                            ? '<span class="battery-charge-state-icon">&#x2B06;</span>'
+                            : '<span class="battery-charge-state-icon">&#x2B07;</span>';
                 },
             },
 

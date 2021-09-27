@@ -1,23 +1,17 @@
 import express from 'express';
-import { getSensorData } from './lib/get-sensor-data';
-import { getPowerwallData } from './lib/get-powerwall-data';
-const config = require('../config.json');
+import { subscribeToBroker, currentData } from './lib/mqtt';
 
 const app = express();
 
 app.use(express.static('public'));
 
-app.get('/api', async(req, res) => {
-    const [outdoorData, indoorData, powerwallData] = await Promise.all([
-        await getSensorData(config.outdoor),
-        await getSensorData(config.indoor),
-        await getPowerwallData(),
-    ]);
+subscribeToBroker();
 
+app.get('/api', async(req, res) => {
     return res.json({
-        outdoor: outdoorData,
-        indoor: indoorData,
-        power: powerwallData,
+        outdoor: currentData.outdoor,
+        indoor: currentData.indoor,
+        power: currentData.power,
     });
 });
 

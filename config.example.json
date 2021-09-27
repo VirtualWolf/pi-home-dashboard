@@ -1,7 +1,8 @@
 {
-    "outdoor": "http://outdoor",
-    "indoor": "http://indoor",
-    "power": "https://powerwall",
-    "email": "<powerwall-email-address>",
-    "password": "<powerwall-password>"
+    "brokerAddress": "localhost",
+    "topics": {
+        "outdoor": "home/outdoor/weather",
+        "indoor": "home/indoor/weather",
+        "power": "home/power"
+    }
 }

@@ -1,3 +1,7 @@
 node_modules
 config.json
 dist
+mosquitto/data
+mosquitto/log
+mosquitto/mosquitto.d
+mosquitto/certs

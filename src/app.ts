@@ -1,11 +1,13 @@
 import express from 'express';
-import { subscribeToBroker, currentData } from './lib/mqtt';
+import { subscribeToBroker, checkForRecentUpdates, currentData } from './lib/mqtt';
 
 const app = express();
 
 app.use(express.static('public'));
 
 subscribeToBroker();
+
+setInterval(() => checkForRecentUpdates(), 60000);
 
 app.get('/api', async(req, res) => {
     return res.json({

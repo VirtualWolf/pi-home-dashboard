@@ -19,7 +19,19 @@ export const currentData = {
         production: '—',
         batteryChargePercentage: '—',
         batteryChargeState: 'idle',
-    }
+    },
+    airquality: {
+        timestamp: 0,
+        pm_1_0: '—',
+        pm_2_5: '—',
+        pm_10: '—',
+        particles_0_3um: '—',
+        particles_0_5um: '—',
+        particles_1_0um: '—',
+        particles_2_5um: '—',
+        particles_5_0um: '—',
+        particles_10um: '—',
+    },
 }
 
 export function checkForRecentUpdates() {
@@ -28,6 +40,7 @@ export function checkForRecentUpdates() {
     const outdoorDiff = now.diff(DateTime.fromMillis(currentData.outdoor.timestamp), 'minutes').toObject();
     const indoorDiff = now.diff(DateTime.fromMillis(currentData.indoor.timestamp), 'minutes').toObject();
     const powerDiff = now.diff(DateTime.fromMillis(currentData.power.timestamp), 'minutes').toObject();
+    const airQualityDiff = now.diff(DateTime.fromMillis(currentData.airquality.timestamp), 'minutes').toObject();
 
     if (outdoorDiff.minutes && outdoorDiff.minutes > 1) {
         log('Outdoor difference was greater than one minute, got ' + outdoorDiff.minutes, 'DEBUG');
@@ -60,6 +73,23 @@ export function checkForRecentUpdates() {
             batteryChargeState: 'idle',
         };
     }
+
+    if (airQualityDiff.minutes && airQualityDiff.minutes > 10) {
+        log('Air quality difference was greater than 10 minutes, got ' + airQualityDiff.minutes, 'DEBUG');
+
+        currentData.airquality = {
+            timestamp: 0,
+            pm_1_0: '—',
+            pm_2_5: '—',
+            pm_10: '—',
+            particles_0_3um: '—',
+            particles_0_5um: '—',
+            particles_1_0um: '—',
+            particles_2_5um: '—',
+            particles_5_0um: '—',
+            particles_10um: '—',
+        }
+    }
 }
 
 export function subscribeToBroker() {
@@ -72,17 +102,15 @@ export function subscribeToBroker() {
     client.on('message', (topic, message) => {
         log(`Message received on topic ${topic}: ${message.toString()}`, 'DEBUG');
 
-        if (topic === config.topics.outdoor || topic === config.topics.indoor) {
-            const json = JSON.parse(message.toString());
+        const json = JSON.parse(message.toString());
 
+        if (topic === config.topics.outdoor || topic === config.topics.indoor) {
             const location = Object.keys(config.topics).find(key => config.topics[key] === topic);
 
             updateCurrentWeatherData(<Location>location, json);
         }
 
         if (topic === config.topics.power) {
-            const json = JSON.parse(message.toString());
-
             currentData.power.timestamp = json.timestamp;
 
             currentData.power.consumption = (json.home_usage/1000).toFixed(2);
@@ -95,6 +123,10 @@ export function subscribeToBroker() {
                 : json.battery_flow > 30
                     ? 'draining'
                     : 'charging';
+        }
+
+        if (topic === config.topics.airquality) {
+            currentData.airquality = json;
         }
     });
 }

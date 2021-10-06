@@ -14,6 +14,7 @@ app.get('/api', async(req, res) => {
         outdoor: currentData.outdoor,
         indoor: currentData.indoor,
         power: currentData.power,
+        airquality: currentData.airquality,
     });
 });
 

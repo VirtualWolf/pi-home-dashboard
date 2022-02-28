@@ -1,9 +1,15 @@
 {
     "brokerAddress": "localhost",
     "topics": {
-        "outdoor": "home/outdoor/weather",
-        "indoor": "home/indoor/weather",
-        "power": "home/power",
-        "airquality": "home/outdoor/airquality"
+        "weather": [
+            "home/outdoor/weather",
+            "home/indoor/weather"
+        ],
+        "airquality": [
+            "home/outdoor/airquality"
+        ],
+        "power": [
+            "home/power"
+        ]
     }
 }

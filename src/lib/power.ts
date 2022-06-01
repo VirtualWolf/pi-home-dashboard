@@ -36,7 +36,7 @@ export class Power {
             this.consumption = (home_usage/1000).toFixed(2);
 
             this.production = solar_generation <= 30
-                ? '0.00'
+                ? '0'
                 : (solar_generation/1000).toFixed(2);
 
             this.batteryChargePercentage = battery_charge_percentage.toFixed(1);

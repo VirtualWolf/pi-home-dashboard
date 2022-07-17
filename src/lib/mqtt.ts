@@ -53,7 +53,7 @@ export function subscribeToBroker() {
         if (config.topics.weather.includes(topic)) {
             // Weather topics end in the form "/$LOCATION/weather"
             const location = topic.split('/').slice(-2, -1).join();
-    
+
             const index = weatherData.findIndex(element => element.name === location);
 
             weatherData[index].updateCurrentData({
@@ -76,7 +76,7 @@ export function subscribeToBroker() {
         if (config.topics.airquality.includes(topic)) {
             // Air quality topics end in the form "/$LOCATION/weather"
             const location = topic.split('/').slice(-2, -1).join();
-    
+
             const index = airQualityData.findIndex(element => element.name === location);
 
             airQualityData[index].updateCurrentData({

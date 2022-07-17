@@ -7,38 +7,40 @@
 
     <body>
         <div id="dashboard">
-            <div class="outdoor-temperature temperature">
+            <div class="outdoor-temperature temperature" :class="{'no-updates-received': data.outdoor.noUpdatesReceived}">
                 {{ data.outdoor.temperature }}&deg;
             </div>
 
-            <div class="outdoor-humidity humidity">
+            <div class="outdoor-humidity humidity" :class="{'no-updates-received': data.outdoor.noUpdatesReceived}">
                 {{ data.outdoor.humidity }}%
             </div>
 
-            <div class="indoor-temperature temperature">
+            <div class="indoor-temperature temperature" :class="{'no-updates-received': data.indoor.noUpdatesReceived}">
                 {{ data.indoor.temperature }}&deg;
             </div>
 
-            <div class="indoor-humidity humidity">
+            <div class="indoor-humidity humidity" :class="{'no-updates-received': data.indoor.noUpdatesReceived}">
                 {{ data.indoor.humidity }}%
             </div>
 
             <div class="consumption">
                 <div class="power-heading">Consumption</div>
-                {{ data.power.consumption }}kW
+                <span :class="{'no-updates-received': data.power.noUpdatesReceived}">{{ data.power.consumption }}kW</span>
             </div>
 
             <div class="production">
                 <div class="power-heading">Production</div>
-                {{ data.power.production }}kW
+                <span :class="{'no-updates-received': data.power.noUpdatesReceived}">{{ data.power.production }}kW</span>
             </div>
 
             <div class="battery-charge">
                 <div class="power-heading">Charge</div>
-                <span
-                    v-if="!data.power.batteryChargeState.match(/—|idle/)"
-                    :class="chargeState"
-                    v-html="chargeSymbol"></span>{{ data.power.batteryChargePercentage }}%
+                <span :class="{'no-updates-received': data.power.noUpdatesReceived}">
+                    <span
+                        v-if="!data.power.batteryChargeState.match(/—|idle/)"
+                        :class="chargeState"
+                        v-html="chargeSymbol"></span>{{ data.power.batteryChargePercentage }}%
+                </span>
             </div>
         </div>
 
@@ -78,6 +80,7 @@
                     return {
                         'power-battery-draining': this.data.power.batteryChargeState === 'draining',
                         'power-battery-charging': this.data.power.batteryChargeState === 'charging',
+                        'no-updates-received': this.data.power.noUpdatesReceived,
                     }
                 },
                 chargeSymbol() {

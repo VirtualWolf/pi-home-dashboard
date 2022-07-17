@@ -48,7 +48,7 @@ body {
 .production,
 .battery-charge {
     justify-self: center;
-    font-size: 72px;
+    font-size: 68px;
 }
 
 .power {
@@ -63,7 +63,7 @@ body {
 }
 
 .battery-charge-state-icon {
-    font-size: 90%;
+    font-size: 75%;
 }
 
 .power-battery-draining {
@@ -72,6 +72,10 @@ body {
 
 .power-battery-charging {
     color: #36B37E;
+}
+
+.no-updates-received {
+    color: #AAA;
 }
 
 #clock {

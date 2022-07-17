@@ -6,6 +6,7 @@ export class Power {
     production: string;
     batteryChargePercentage: string;
     batteryChargeState: 'idle' | 'draining' | 'charging';
+    noUpdatesReceived: boolean;
 
     constructor() {
         this.timestamp = 0;
@@ -13,6 +14,7 @@ export class Power {
         this.production = '—';
         this.batteryChargePercentage = '—';
         this.batteryChargeState = 'idle';
+        this.noUpdatesReceived = false;
 
         setInterval(() => this.checkForRecentUpdates(), 60000);
     }
@@ -24,6 +26,7 @@ export class Power {
             production: this.production,
             batteryChargePercentage: this.batteryChargePercentage,
             batteryChargeState: this.batteryChargeState,
+            noUpdatesReceived: this.noUpdatesReceived
         }
     }
 
@@ -35,7 +38,7 @@ export class Power {
 
             this.consumption = (home_usage/1000).toFixed(2);
 
-            this.production = solar_generation <= 30
+            this.production = solar_generation <= 0
                 ? '0'
                 : (solar_generation/1000).toFixed(2);
 
@@ -46,15 +49,13 @@ export class Power {
                 : battery_flow > 30
                     ? 'draining'
                     : 'charging';
+
+            this.noUpdatesReceived = false;
     }
 
     checkForRecentUpdates = () => {
         if (noUpdatesReceived({name: 'power', timestamp: this.timestamp})) {
-            this.timestamp = 0;
-            this.consumption = '—';
-            this.production = '—';
-            this.batteryChargePercentage = '—';
-            this.batteryChargeState = 'idle';
+            this.noUpdatesReceived = true;
         }
     }
 }

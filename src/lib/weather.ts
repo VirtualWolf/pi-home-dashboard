@@ -5,12 +5,14 @@ export class Weather {
     temperature: string;
     humidity: string;
     timestamp: number;
+    noUpdatesReceived: boolean;
 
     constructor(name: string) {
         this.name = name;
         this.temperature = '—';
         this.humidity = '—';
         this.timestamp = 0;
+        this.noUpdatesReceived = false;
 
         setInterval(() => this.checkForRecentUpdates(), 60000);
     }
@@ -20,6 +22,7 @@ export class Weather {
             timestamp: this.timestamp,
             temperature: this.temperature,
             humidity: this.humidity,
+            noUpdatesReceived: this.noUpdatesReceived,
         }
     }
 
@@ -27,13 +30,12 @@ export class Weather {
         this.timestamp = timestamp;
         this.temperature = temperature.toFixed(1);
         this.humidity = humidity.toFixed(0);
+        this.noUpdatesReceived = false;
     }
 
     checkForRecentUpdates = () => {
         if (noUpdatesReceived({name: this.name, timestamp: this.timestamp})) {
-            this.timestamp = 0;
-            this.temperature = '—';
-            this.humidity = '—';
+            this.noUpdatesReceived = true;
         }
     }
 }

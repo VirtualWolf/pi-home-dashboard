@@ -9,16 +9,16 @@ const weatherData = new Array<Weather>();
 const airQualityData = new Array<AirQuality>();
 const powerData = new Array<Power>();
 
-export function subscribeToBroker() {
-    const client = connect({
-        servers: [{
-            host: config.brokerAddress,
-            port: config.brokerPort || 1883,
-        }],
-        clientId: config.clientId || 'pi-home-dashboard',
-        clean: config.clean || true,
-    });
+const client = connect({
+    servers: [{
+        host: config.brokerAddress,
+        port: config.brokerPort || 1883,
+    }],
+    clientId: config.clientId || 'pi-home-dashboard',
+    clean: config.clean || true,
+});
 
+export function subscribeToBroker() {
     const topics: string[] = [];
 
     Object.keys(config.topics).forEach((type: string) => {
@@ -115,4 +115,19 @@ export function getCurrentData() {
     allData.power = powerData[0].getCurrentData();
 
     return allData;
+}
+
+export function setHyperPixelDisplayIsOn(is_on: boolean) {
+    const payload = JSON.stringify({is_on});
+
+    client.publish(config.topics.hyperpixel, payload, {
+        qos: 2,
+        retain: true,
+    }, (err: any) => {
+        if (err) {
+            log(err.message);
+        } else {
+            log(`Message successfully sent to ${config.topics.hyperpixel}: ${payload}`);
+        }
+    });
 }

@@ -14,7 +14,7 @@ export class Weather {
         this.timestamp = 0;
         this.noUpdatesReceived = false;
 
-        setInterval(() => this.checkForRecentUpdates(), 60000);
+        setInterval(() => this.checkForRecentUpdates(), 120000);
     }
 
     getCurrentData = () => {

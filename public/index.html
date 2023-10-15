@@ -7,20 +7,20 @@
 
     <body>
         <div id="dashboard">
-            <div class="outdoor-temperature temperature" :class="{'no-updates-received': data.outdoor.noUpdatesReceived}">
-                {{ data.outdoor.temperature }}&deg;
+            <div class="upper-temperature temperature" :class="{'no-updates-received': data[upperLocation].noUpdatesReceived}">
+                {{ data[upperLocation].temperature }}&deg;
             </div>
 
-            <div class="outdoor-humidity humidity" :class="{'no-updates-received': data.outdoor.noUpdatesReceived}">
-                {{ data.outdoor.humidity }}%
+            <div class="upper-humidity humidity" :class="{'no-updates-received': data[upperLocation].noUpdatesReceived}">
+                {{ data[upperLocation].humidity }}%
             </div>
 
-            <div class="indoor-temperature temperature" :class="{'no-updates-received': data.indoor.noUpdatesReceived}">
-                {{ data.indoor.temperature }}&deg;
+            <div class="lower-temperature temperature" :class="{'no-updates-received': data[lowerLocation].noUpdatesReceived}">
+                {{ data[lowerLocation].temperature }}&deg;
             </div>
 
-            <div class="indoor-humidity humidity" :class="{'no-updates-received': data.indoor.noUpdatesReceived}">
-                {{ data.indoor.humidity }}%
+            <div class="lower-humidity humidity" :class="{'no-updates-received': data[lowerLocation].noUpdatesReceived}">
+                {{ data[lowerLocation].humidity }}%
             </div>
 
             <div class="consumption">
@@ -50,12 +50,18 @@
         const Dashboard = {
             data() {
                 return {
+                    upperLocation: 'outdoor',
+                    lowerLocation: 'indoor',
                     data: {
                         outdoor: {
                             temperature: '—',
                             humidity: '—',
                         },
                         indoor: {
+                            temperature: '—',
+                            humidity: '—',
+                        },
+                        office: {
                             temperature: '—',
                             humidity: '—',
                         },
@@ -70,6 +76,16 @@
             },
 
             async mounted() {
+                const params = new URLSearchParams(window.location.search);
+
+                if (params.get('upper')) {
+                    this.upperLocation = params.get('upper');
+                }
+
+                if (params.get('lower')) {
+                    this.lowerLocation = params.get('lower');
+                }
+
                 await this.fetchData();
 
                 setInterval(async () => await this.fetchData(), 10000);
@@ -85,8 +101,8 @@
                 },
                 chargeSymbol() {
                     return this.data.power.batteryChargeState === 'charging'
-                            ? '<span class="battery-charge-state-icon">&#x2B06;</span>'
-                            : '<span class="battery-charge-state-icon">&#x2B07;</span>';
+                        ? '<span class="battery-charge-state-icon">&#x2B06;</span>'
+                        : '<span class="battery-charge-state-icon">&#x2B07;</span>';
                 },
             },
 

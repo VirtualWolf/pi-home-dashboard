@@ -1,4 +1,4 @@
-FROM node:14.17.3-alpine AS base
+FROM node:18.18.1-alpine AS base
 
 FROM base AS build
 RUN mkdir -p /opt/build
@@ -13,7 +13,7 @@ RUN mkdir -p /opt/service && chown -R node: /opt/service
 USER node
 WORKDIR /opt/service
 COPY --chown=node:node package*.json ./
-RUN npm install --only=production && rm -rf /home/node/.npm
+RUN npm install --omit=dev && rm -rf /home/node/.npm
 COPY --chown=node:node --from=build /opt/build/dist /opt/service/dist
 COPY --chown=node:node public public
 

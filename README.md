@@ -25,3 +25,5 @@ It requires a file called `config.json` in the root level of the repository with
     }
 }
 ```
+
+On the main dashboard page at `/index.html`, the upper and lower temperature/humidity locations default to `outdoor` and `indoor` respectively, but can be changed by optionally setting the `upper` and/or `lower` query parameters, e.g. `http://localhost/index.html?upper=office&lower=outdoor`.

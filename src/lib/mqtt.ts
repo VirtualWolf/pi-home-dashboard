@@ -50,7 +50,7 @@ export function subscribeToBroker() {
 
         const json = JSON.parse(message.toString());
 
-        if (config.topics.weather.includes(topic)) {
+        if (config.topics.weather?.includes(topic)) {
             // Weather topics end in the form "/$LOCATION/weather"
             const location = topic.split('/').slice(-2, -1).join();
 
@@ -63,7 +63,7 @@ export function subscribeToBroker() {
             });
         }
 
-        if (config.topics.power.includes(topic)) {
+        if (config.topics.power?.includes(topic)) {
             powerData[0].updateCurrentData({
                 timestamp: json.timestamp,
                 home_usage: json.home_usage,
@@ -73,7 +73,7 @@ export function subscribeToBroker() {
             });
         }
 
-        if (config.topics.airquality.includes(topic)) {
+        if (config.topics.airquality?.includes(topic)) {
             // Air quality topics end in the form "/$LOCATION/weather"
             const location = topic.split('/').slice(-2, -1).join();
 

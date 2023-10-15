@@ -13,8 +13,8 @@ body {
     width: 100%;
     height: 100%;
     grid-template-areas:
-        "outdoor-temperature outdoor-temperature outdoor-humidity"
-        "indoor-temperature indoor-temperature indoor-humidity"
+        "upper-temperature upper-temperature upper-humidity"
+        "lower-temperature lower-temperature lower-humidity"
         "consumption production battery-charge";
     grid-template-rows: 1fr 1fr 1fr;
     grid-template-columns: 1fr 1fr 1fr;
@@ -23,10 +23,10 @@ body {
     margin: 0;
 }
 
-.outdoor-temperature   { grid-area: outdoor-temperature }
-.outdoor-humidity      { grid-area: outdoor-humidity }
-.indoor-temperature    { grid-area: indoor-temperature }
-.indoor-humidity       { grid-area: indoor-humidity }
+.upper-temperature     { grid-area: upper-temperature }
+.upper-humidity        { grid-area: upper-humidity }
+.lower-temperature     { grid-area: lower-temperature }
+.lower-humidity        { grid-area: lower-humidity }
 .consumption           { grid-area: consumption }
 .production            { grid-area: production }
 .battery-charge        { grid-area: battery-charge }

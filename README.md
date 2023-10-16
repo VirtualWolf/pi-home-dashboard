@@ -27,3 +27,19 @@ It requires a file called `config.json` in the root level of the repository with
 ```
 
 On the main dashboard page at `/index.html`, the upper and lower temperature/humidity locations default to `outdoor` and `indoor` respectively, but can be changed by optionally setting the `upper` and/or `lower` query parameters, e.g. `http://localhost/index.html?upper=office&lower=outdoor`.
+
+## Changing colour for night time
+Because none of the night time colour-changing applications work on Raspberry Pi ([xflux](https://justgetflux.com/linux.html), [Redshift](https://github.com/jonls/redshift)), you can optionally set a `location` object in `config.json` to have the body text colour change to a more yellow colour after sunset and before sunrise based on the time in your latitude and longitude:
+
+```json
+{
+    "brokerAddress": "localhost",
+    [...]
+    "location": {
+        "latitude": -33.872761,
+        "longitude": 151.205338
+    }
+}
+```
+
+This uses [Suncalc](https://github.com/mourner/suncalc) to do the time calculations.

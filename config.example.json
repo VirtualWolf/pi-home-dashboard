@@ -1,5 +1,8 @@
 {
     "brokerAddress": "localhost",
+    "brokerPort": 1883,
+    "clientId": "pi-home-dashboard",
+    "clean": true,
     "topics": {
         "weather": [
             "home/outdoor/weather",
@@ -11,5 +14,9 @@
         "power": [
             "home/power"
         ]
+    },
+    "location": {
+        "latitude": -33.872761,
+        "longitude": 151.205338
     }
 }

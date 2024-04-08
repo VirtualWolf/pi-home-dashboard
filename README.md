@@ -43,3 +43,18 @@ Because none of the night time colour-changing applications work on Raspberry Pi
 ```
 
 This uses [Suncalc](https://github.com/mourner/suncalc) to do the time calculations.
+
+## ESP32 management
+This repository also includes an admin UI to manage the ESP32s that are running the [esp32-sensor-reader-mqtt](https://github.com/VirtualWolf/esp32-sensor-reader-mqtt) code, it lives at `/admin.html` and requires some extra configuration in the `config.json` file, which is an array of the client IDs of all the ESP32s you want to manage:
+
+```json
+{
+    "brokerAddress": "localhost",
+    [...]
+    "clientIds": [
+        "outdoor", "backroom", "indoor", "office"
+    ]
+}
+```
+
+Each one specified here will show as a button in the UI and allow you to configure it.

@@ -59,7 +59,9 @@ export function subscribeToBroker() {
             weatherData[index].updateCurrentData({
                 timestamp: json.timestamp,
                 temperature: json.temperature,
-                humidity: json.humidity
+                humidity: json.humidity,
+                dew_point: json.dew_point,
+                pressure: json.pressure,
             });
         }
 

@@ -18,5 +18,8 @@
     "location": {
         "latitude": -33.872761,
         "longitude": 151.205338
-    }
+    },
+    "clientIds": [
+        "outdoor", "indoor"
+    ]
 }

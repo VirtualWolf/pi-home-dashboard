@@ -1,4 +1,3 @@
-version: '3.3'
 services:
   server:
     image: virtualwolf/pi-home-dashboard:latest

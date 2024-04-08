@@ -4,7 +4,6 @@
 
         <script src="/js/vue.global.prod-3.4.21.min.js" lang="javascript"></script>
         <script src="/js/mqtt-5.5.0.min.js" lang="javascript"></script>
-        <script src="/js/admin.js" lang="javascript"></script>
 
         <link rel="stylesheet" href="/css/admin.css" />
         <link rel="stylesheet" href="/css/bootstrap.min.css" />
@@ -61,7 +60,7 @@
             <div class="btn-group mb-4" role="group">
                 <button
                     type="button"
-                    class="btn capitalise"
+                    class="btn"
                     :class="{'btn-primary': client === selectedClient, 'btn-outline-primary': client !== selectedClient}"
                     v-for="client in config.clientIds"
                     @click="setActiveClient(client)">
@@ -273,7 +272,7 @@
                             role="switch"
                             id="enable_bme280_additional_data"
                             v-model="selectedClientConfig.enable_bme280_additional_data"
-                            :disabled="!subscriptionActive || selectedClientConfig.sensor_type !== 'bme280' ? true : false"
+                            :disabled="!subscriptionActive"
                             @change="updateConfig('enable_bme280_additional_data')">
                         <label class="form-check-label" for="enable_bme280_additional_data">Enable BME 280 additional data</label>
                     </div>
@@ -396,8 +395,8 @@
                         tx_pin: undefined,
                         sda_pin: undefined,
                         scl_pin: undefined,
-                        disable_watchdog: undefined,
-                        enable_bme280_additional_data: undefined,
+                        disable_watchdog: false,
+                        enable_bme280_additional_data: true,
                         github_token: undefined,
                         github_username: undefined,
                         github_repository: undefined,
@@ -472,6 +471,12 @@
 
                                     if (json.config) {
                                         this.selectedClientConfig = json.config;
+
+                                        // The default setting for the ESP32 code is to enable additional data unless it's
+                                        //  explicitly turned off, so we need to make the toggle match that default state
+                                        if (json.config.enable_bme280_additional_data === undefined) {
+                                            this.selectedClientConfig.enable_bme280_additional_data = true;
+                                        }
                                     }
                                 } catch (err) {
                                     console.log('Message was not JSON: ' + message);
@@ -560,8 +565,8 @@
                         tx_pin: undefined,
                         sda_pin: undefined,
                         scl_pin: undefined,
-                        disable_watchdog: undefined,
-                        enable_bme280_additional_data: undefined,
+                        disable_watchdog: false,
+                        enable_bme280_additional_data: true,
                         github_username: undefined,
                         github_token: undefined,
                         github_repository: undefined,

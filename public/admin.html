@@ -52,20 +52,31 @@
                 <div class="alert alert-success align-middle" role="alert" v-if="connected">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
                         <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                    </svg> Connected to <span class="font-monospace">ws://{{ config.host }}:{{ config.port }}</span> as <span class="font-monospace">{{config.clientId}}</span>
+                    </svg> Connected to <span class="font-monospace">ws://{{ config.host }}:{{ config.port }}</span>
                 </div>
             </div>
 
-            <h3>Available clients</h3>
-            <div class="btn-group mb-4" role="group">
-                <button
-                    type="button"
-                    class="btn"
-                    :class="{'btn-primary': client === selectedClient, 'btn-outline-primary': client !== selectedClient}"
-                    v-for="client in config.clientIds"
-                    @click="setActiveClient(client)">
-                        {{client}}
-                </button>
+            <h3>Clients</h3>
+            <div class="row mb-4">
+                <div class="btn-group" role="group">
+                    <button
+                        type="button"
+                        class="btn"
+                        :class="{
+                            'btn-primary': client === selectedClient,
+                            'btn-outline-primary': client !== selectedClient,
+                        }"
+                        v-for="client in config.clientIds"
+                        @click="setActiveClient(client)">
+                            {{client}}
+                    </button>
+                </div>
+            </div>
+
+            <div class="alert alert-danger mb-4 pt-2 pb-2 text-center" role="alert" v-if="selectedClientConfig.status === 'offline'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill align-middle" viewBox="0 0 16 16">
+                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                </svg> <span class="align-middle"><span class="fw-bold">{{ selectedClient }}</span> is offline!</span>
             </div>
 
             <div class="mb-4">
@@ -76,11 +87,11 @@
                         <form>
                             <div class="input-group mb-3 text-end">
                                 <span class="input-group-text" id="ssid_description">Network name</span>
-                                <input type="text" class="form-control" id="ssid" v-model="selectedClientConfig.ssid" :disabled="!subscriptionActive || !connected" aria-label="Network name" aria-describedby="ssid_description">
+                                <input type="text" class="form-control" id="ssid" v-model="selectedClientConfig.ssid" :disabled="inputsDisabled" aria-label="Network name" aria-describedby="ssid_description">
                                 <button
                                     type="button"
                                     class="btn btn-outline-primary"
-                                    :disabled="!subscriptionActive || !connected"
+                                    :disabled="inputsDisabled"
                                     @click="updateConfig('ssid')">
                                         Update
                                 </button>
@@ -90,11 +101,11 @@
                     <div class="col-lg">
                         <div class="input-group mb-3 text-end">
                             <span class="input-group-text" id="wifi_pw_description">Network password</span>
-                            <input type="password" class="form-control" id="wifi_pw" v-model="selectedClientConfig.wifi_pw" :disabled="!subscriptionActive || !connected" aria-label="Network password" aria-describedby="wifi_pw_description">
+                            <input type="password" class="form-control" id="wifi_pw" v-model="selectedClientConfig.wifi_pw" :disabled="inputsDisabled" aria-label="Network password" aria-describedby="wifi_pw_description">
                             <button
                                 type="button"
                                 class="btn btn-outline-primary"
-                                :disabled="!subscriptionActive || !connected"
+                                :disabled="inputsDisabled"
                                 @click="updateConfig('wifi_pw')">
                                     Update
                             </button>
@@ -106,11 +117,11 @@
                     <div class="col-lg">
                         <div class="input-group mb-3 text-end">
                             <span class="input-group-text" id="server_description">MQTT broker</span>
-                            <input type="text" class="form-control" id="server" v-model="selectedClientConfig.server" :disabled="!subscriptionActive || !connected" aria-label="MQTT broker" aria-describedby="server_description">
+                            <input type="text" class="form-control" id="server" v-model="selectedClientConfig.server" :disabled="inputsDisabled" aria-label="MQTT broker" aria-describedby="server_description">
                             <button
                                 type="button"
                                 class="btn btn-outline-primary"
-                                :disabled="!subscriptionActive || !connected"
+                                :disabled="inputsDisabled"
                                 @click="updateConfig('server')">
                                     Update
                             </button>
@@ -119,11 +130,11 @@
                     <div class="col-lg">
                         <div class="input-group mb-3 text-end">
                             <span class="input-group-text" id="port_description">MQTT broker port</span>
-                            <input type="text" class="form-control" id="port" v-model="selectedClientConfig.port" :disabled="!subscriptionActive || !connected" aria-label="MQTT broker port" aria-describedby="port_description">
+                            <input type="text" class="form-control" id="port" v-model="selectedClientConfig.port" :disabled="inputsDisabled" aria-label="MQTT broker port" aria-describedby="port_description">
                             <button
                                 type="button"
                                 class="btn btn-outline-primary"
-                                :disabled="!subscriptionActive || !connected"
+                                :disabled="inputsDisabled"
                                 @click="updateConfig('port')">
                                     Update
                             </button>
@@ -135,11 +146,11 @@
                     <div class="col-lg">
                         <div class="input-group mb-3 text-end">
                             <span class="input-group-text" id="client_id_description">Client ID</span>
-                            <input type="text" class="form-control" id="client_id" v-model="selectedClientConfig.client_id" :disabled="!subscriptionActive || !connected" aria-label="Client ID" aria-describedby="client_id_description">
+                            <input type="text" class="form-control" id="client_id" v-model="selectedClientConfig.client_id" :disabled="inputsDisabled" aria-label="Client ID" aria-describedby="client_id_description">
                             <button
                                 type="button"
                                 class="btn btn-outline-primary"
-                                :disabled="!subscriptionActive || !connected"
+                                :disabled="inputsDisabled"
                                 @click="updateConfig('client_id')">
                                     Update
                             </button>
@@ -148,11 +159,11 @@
                     <div class="col-lg">
                         <div class="input-group mb-3 text-end">
                             <span class="input-group-text" id="topic_description">Topic</span>
-                            <input type="text" class="form-control" id="topic" v-model="selectedClientConfig.topic" :disabled="!subscriptionActive || !connected" aria-label="Topic" aria-describedby="topic_description">
+                            <input type="text" class="form-control" id="topic" v-model="selectedClientConfig.topic" :disabled="inputsDisabled" aria-label="Topic" aria-describedby="topic_description">
                             <button
                                 type="button"
                                 class="btn btn-outline-primary"
-                                :disabled="!subscriptionActive || !connected"
+                                :disabled="inputsDisabled"
                                 @click="updateConfig('topic')">
                                     Update
                             </button>
@@ -169,7 +180,7 @@
                         <div class="col-lg">
                             <div class="input-group mb-3">
                                 <span class="input-group-text" id="sensor_type_description">Sensor type</span>
-                                <select class="form-select" name="sensor_type" id="sensor_type" v-model="selectedClientConfig.sensor_type" :disabled="!subscriptionActive || !connected" aria-label="Sensor type" aria-describedby="sensor_type_description">
+                                <select class="form-select" name="sensor_type" id="sensor_type" v-model="selectedClientConfig.sensor_type" :disabled="inputsDisabled" aria-label="Sensor type" aria-describedby="sensor_type_description">
                                     <option v-for="option in sensorTypes" :value="option.value">
                                         {{ option.text }}
                                     </option>
@@ -177,7 +188,7 @@
                                 <button
                                     type="button"
                                     class="btn btn-outline-primary"
-                                    :disabled="!subscriptionActive || !connected"
+                                    :disabled="inputsDisabled"
                                     @click="updateConfig('sensor_type')">
                                         Update
                                 </button>
@@ -187,11 +198,11 @@
                         <div class="col-lg">
                             <div class="input-group mb-3">
                                 <span class="input-group-text" id="tx_pin_description">TX pin</span>
-                                <input type="text" class="form-control" id="tx_pin" v-model="selectedClientConfig.tx_pin" :disabled="!subscriptionActive || !connected" aria-label="TX pin" aria-describedby="tx_pin_description" :placeholder="!subscriptionActive ? '' : 26">
+                                <input type="text" class="form-control" id="tx_pin" v-model="selectedClientConfig.tx_pin" :disabled="inputsDisabled" aria-label="TX pin" aria-describedby="tx_pin_description" :placeholder="!subscriptionActive ? '' : 26">
                                 <button
                                     type="button"
                                     class="btn btn-outline-primary"
-                                    :disabled="!subscriptionActive || !connected"
+                                    :disabled="inputsDisabled"
                                     @click="updateConfig('tx_pin')">
                                         Update
                                 </button>
@@ -203,11 +214,11 @@
                         <div class="col-lg">
                             <div class="input-group mb-3">
                                 <span class="input-group-text" id="sda_pin_description">SDA pin</span>
-                                <input type="text" class="form-control" id="sda_pin" v-model="selectedClientConfig.sda_pin" :disabled="!subscriptionActive || !connected" aria-label="SDA pin" aria-describedby="sda_pin_description" :placeholder="!subscriptionActive ? '' : 23">
+                                <input type="text" class="form-control" id="sda_pin" v-model="selectedClientConfig.sda_pin" :disabled="inputsDisabled" aria-label="SDA pin" aria-describedby="sda_pin_description" :placeholder="!subscriptionActive ? '' : 23">
                                 <button
                                     type="button"
                                     class="btn btn-outline-primary"
-                                    :disabled="!subscriptionActive || !connected"
+                                    :disabled="inputsDisabled"
                                     @click="updateConfig('sda_pin')">
                                         Update
                                 </button>
@@ -217,11 +228,11 @@
                         <div class="col-lg">
                             <div class="input-group mb-3">
                                 <span class="input-group-text" id="scl_pin_description">SCL pin</span>
-                                <input type="text" class="form-control" id="scl_pin" v-model="selectedClientConfig.scl_pin" :disabled="!subscriptionActive || !connected" aria-label="SCL pin" aria-describedby="scl_pin_description" :placeholder="!subscriptionActive ? '' : 22">
+                                <input type="text" class="form-control" id="scl_pin" v-model="selectedClientConfig.scl_pin" :disabled="inputsDisabled" aria-label="SCL pin" aria-describedby="scl_pin_description" :placeholder="!subscriptionActive ? '' : 22">
                                 <button
                                     type="button"
                                     class="btn btn-outline-primary"
-                                    :disabled="!subscriptionActive || !connected"
+                                    :disabled="inputsDisabled"
                                     @click="updateConfig('scl_pin')">
                                         Update
                                 </button>
@@ -239,11 +250,11 @@
                         <div class="col-lg">
                             <div class="input-group mb-3">
                                 <span class="input-group-text" id="ntp_server_description">NTP server</span>
-                                <input type="text" class="form-control" id="ntp_server" v-model="selectedClientConfig.ntp_server" :disabled="!subscriptionActive || !connected" aria-label="NTP server" aria-describedby="ntp_server_description">
+                                <input type="text" class="form-control" id="ntp_server" v-model="selectedClientConfig.ntp_server" :disabled="inputsDisabled" aria-label="NTP server" aria-describedby="ntp_server_description" :placeholder="!subscriptionActive ? '' : 'time.cloudflare.com'">
                                 <button
                                     type="button"
                                     class="btn btn-outline-primary"
-                                    :disabled="!subscriptionActive || !connected"
+                                    :disabled="inputsDisabled"
                                     @click="updateConfig('ntp_server')">
                                         Update
                                 </button>
@@ -260,7 +271,7 @@
                             role="switch"
                             id="disable_watchdog"
                             v-model="selectedClientConfig.disable_watchdog"
-                            :disabled="!subscriptionActive || !connected"
+                            :disabled="inputsDisabled"
                             @change="updateConfig('disable_watchdog')">
                         <label class="form-check-label" for="disable_watchdog">Disable watchdog timer</label>
                     </div>
@@ -272,7 +283,7 @@
                             role="switch"
                             id="enable_bme280_additional_data"
                             v-model="selectedClientConfig.enable_bme280_additional_data"
-                            :disabled="!subscriptionActive"
+                            :disabled="inputsDisabled"
                             @change="updateConfig('enable_bme280_additional_data')">
                         <label class="form-check-label" for="enable_bme280_additional_data">Enable BME 280 additional data</label>
                     </div>
@@ -295,11 +306,11 @@
                         <div class="col-lg">
                             <div class="input-group mb-3">
                                 <span class="input-group-text" id="github_username_description">Username</span>
-                                <input type="text" class="form-control" id="github_username" v-model="selectedClientConfig.github_username" :disabled="!subscriptionActive || !connected" aria-label="GitHub username" aria-describedby="github_username_description" placeholder="VirtualWolf">
+                                <input type="text" class="form-control" id="github_username" v-model="selectedClientConfig.github_username" :disabled="inputsDisabled" aria-label="GitHub username" aria-describedby="github_username_description" placeholder="VirtualWolf">
                                 <button
                                     type="button"
                                     class="btn btn-outline-primary"
-                                    :disabled="!subscriptionActive || !connected"
+                                    :disabled="inputsDisabled"
                                     @click="updateConfig('github_username')">
                                         Update
                                 </button>
@@ -309,11 +320,11 @@
                         <div class="col-lg">
                             <div class="input-group mb-3">
                                 <span class="input-group-text" id="github_repository_description">Repository</span>
-                                <input type="text" class="form-control" id="github_repository" v-model="selectedClientConfig.github_repository" :disabled="!subscriptionActive || !connected" aria-label="GitHub repository" aria-describedby="github_repository_description" placeholder="esp32-sensor-reader-mqtt">
+                                <input type="text" class="form-control" id="github_repository" v-model="selectedClientConfig.github_repository" :disabled="inputsDisabled" aria-label="GitHub repository" aria-describedby="github_repository_description" placeholder="esp32-sensor-reader-mqtt">
                                 <button
                                     type="button"
                                     class="btn btn-outline-primary"
-                                    :disabled="!subscriptionActive || !connected"
+                                    :disabled="inputsDisabled"
                                     @click="updateConfig('github_repository')">
                                         Update
                                 </button>
@@ -325,11 +336,11 @@
                         <div class="col-lg">
                             <div class="input-group mb-3">
                                 <span class="input-group-text">Ref</span>
-                                <input type="text" class="form-control" id="github_ref" v-model="selectedClientConfig.github_ref" :disabled="!subscriptionActive || !connected" aria-label="GitHub ref" aria-describedby="github_ref_description" placeholder="main">
+                                <input type="text" class="form-control" id="github_ref" v-model="selectedClientConfig.github_ref" :disabled="inputsDisabled" aria-label="GitHub ref" aria-describedby="github_ref_description" placeholder="main">
                                 <button
                                     type="button"
                                     class="btn btn-outline-primary"
-                                    :disabled="!subscriptionActive || !connected"
+                                    :disabled="inputsDisabled"
                                     @click="updateConfig('github_ref')">
                                         Update
                                 </button>
@@ -339,11 +350,11 @@
                         <div class="col-lg">
                             <div class="input-group mb-3">
                                 <span class="input-group-text" id="github_token_description">API token</span>
-                                <input type="password" class="form-control" id="github_token" v-model="selectedClientConfig.github_token" :disabled="!subscriptionActive || !connected" aria-label="GitHub token" aria-describedby="github_token_description">
+                                <input type="password" class="form-control" id="github_token" v-model="selectedClientConfig.github_token" :disabled="inputsDisabled" aria-label="GitHub token" aria-describedby="github_token_description">
                                 <button
                                     type="button"
                                     class="btn btn-outline-primary"
-                                    :disabled="!subscriptionActive || !connected"
+                                    :disabled="inputsDisabled"
                                     @click="updateConfig('github_token')">
                                         Update
                                 </button>
@@ -355,7 +366,7 @@
                 <button
                     type="button"
                     class="btn btn-outline-danger"
-                    :disabled="!subscriptionActive || !connected"
+                    :disabled="inputsDisabled"
                     @click="triggerSoftwareUpdate(selectedClient)">
                         Update software
                 </button>
@@ -367,7 +378,7 @@
                 <button
                     type="button"
                     class="btn btn-outline-primary mb-3"
-                    :disabled="!subscriptionActive || !connected"
+                    :disabled="inputsDisabled"
                     @click="getSystemInfo(selectedClient)">
                         Get system info
                 </button>
@@ -401,6 +412,7 @@
                         github_username: undefined,
                         github_repository: undefined,
                         github_ref: undefined,
+                        status: undefined,
                     },
                     subscriptionActive: false,
                     connecting: false,
@@ -419,11 +431,8 @@
             },
 
             computed: {
-                clientButtonStyle() {
-                    return {
-                        'btn-primary': client === this.selectedClient,
-                        'btn-outline-primary': client !== this.selectedClient,
-                    }
+                inputsDisabled() {
+                    return !this.connected || !this.subscriptionActive || this.selectedClientConfig.status === 'offline'
                 }
             },
 
@@ -436,7 +445,6 @@
                         host: json.brokerAddress,
                         port: 8083,
                         protocol: 'ws',
-                        clientId: json.clientId + '-admin',
                         clientIds: json.clientIds,
                     };
                 },
@@ -463,7 +471,7 @@
                                 console.log(`Connection to broker at ${host}:${port} succeeded`);
                             });
 
-                            this.client.on('message', (topic, message) => {
+                            this.client.on('message', async (topic, message) => {
                                 console.log(`Received message on ${topic}: ${message}`);
 
                                 try {
@@ -478,8 +486,19 @@
                                             this.selectedClientConfig.enable_bme280_additional_data = true;
                                         }
                                     }
+
+                                    if (json.status && json.status === 'online') {
+                                        this.selectedClientConfig.status = 'online';
+
+                                        // This ensures we get the latest configuration after the client comes back online
+                                        await this.getClientConfiguration(this.selectedClient);
+                                    }
+
+                                    if (json.status && json.status === 'offline') {
+                                        this.selectedClientConfig.status = 'offline';
+                                    }
                                 } catch (err) {
-                                    console.log('Message was not JSON: ' + message);
+                                    console.log(err)
                                 }
 
                                 const now = new Date();
@@ -571,6 +590,7 @@
                         github_token: undefined,
                         github_repository: undefined,
                         github_ref: undefined,
+                        is_offline: undefined,
                     };
                 },
 

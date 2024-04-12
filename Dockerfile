@@ -1,4 +1,4 @@
-FROM node:18.18.1-alpine AS base
+FROM node:20.12-alpine3.19 AS base
 
 FROM base AS build
 RUN mkdir -p /opt/build
@@ -19,4 +19,4 @@ COPY --chown=node:node public public
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["node", "dist/app.js"]

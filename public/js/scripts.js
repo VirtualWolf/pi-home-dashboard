@@ -1,7 +1,7 @@
 (async () => await checkForLocationConfiguration())()
 
 async function checkForLocationConfiguration() {
-    const response = await fetch('/api/config');
+    const response = await fetch('/api/admin/config');
     const json = await response.json();
 
     if (json.location?.latitude && json.location?.longitude) {

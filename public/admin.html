@@ -446,7 +446,7 @@
 <!-- GITHUB REF -->
                     <div class="row">
                         <div class="col-lg">
-                            <div class="input-group mb-3">
+                            <div class="input-group">
                                 <span class="input-group-text">Ref</span>
                                 <input
                                     type="text"
@@ -469,7 +469,7 @@
 
 <!-- GITHUB API TOKEN -->
                         <div class="col-lg">
-                            <div class="input-group mb-3">
+                            <div class="input-group">
                                 <span class="input-group-text" id="github_token_description">API token</span>
                                 <input
                                     type="password"
@@ -497,6 +497,45 @@
                     :disabled="inputsDisabled"
                     @click="triggerSoftwareUpdate(selectedClient)">
                         Update software
+                </button>
+            </div>
+
+            <div class="mb-4">
+                <h4>Update firmware</h4>
+
+                <p class="small">
+                    Requires the URL of a <span class="font-monospace">.app.bin</span> firmware file from the <em>Firmware (Support for OTA)</em> section of the <a href="https://micropython.org/download/" target="_blank">MicroPython download page</a> for your specific board.
+                </p>
+
+                <form>
+<!-- FIRMWARE URL -->
+                    <div class="row">
+                        <div class="col-lg">
+                            <div class="input-group">
+                                <span class="input-group-text" id="firmware_url_description">URL</span>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="firmware_url"
+                                    aria-label="Firmware URL"
+                                    aria-describedby="firmware_url_description"
+                                    v-model="firmware.url"
+                                    @input="checkIfValidFirmwareUrl"
+                                    :disabled="inputsDisabled">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <button
+                    type="button"
+                    class="btn btn-outline-danger"
+                    :disabled="updateFirmwareButtonDisabled"
+                    @click="triggerFirmwareUpdate(selectedClient)">
+                        Update firmware
+                        <span class="spinner-border spinner-border-sm" role="status" v-if="firmware.update_status === 'updating'">
+                            <span class="visually-hidden">Loading...</span>
+                        </span>
                 </button>
             </div>
 
@@ -550,7 +589,14 @@
                         {text: 'DHT22', value: 'dht22'},
                         {text: 'BME280', value: 'bme280'},
                         {text: 'PMS5003', value: 'pms5003'},
-                    ]
+                    ],
+                    firmware: {
+                        url: undefined,
+                        size: undefined,
+                        sha256: undefined,
+                        is_valid_url: false,
+                        update_status: undefined,
+                    },
                 };
             },
 
@@ -566,12 +612,16 @@
 
                 hidePlaceholderText() {
                     return !this.subscriptionActive || this.selectedClientConfig.status === 'offline'
+                },
+
+                updateFirmwareButtonDisabled() {
+                    return this.inputsDisabled || !this.firmware.url || !this.firmware.is_valid_url || this.firmware.update_status === 'updating';
                 }
             },
 
             methods: {
                 async fetchConfig() {
-                    const response = await fetch('/api/config');
+                    const response = await fetch('/api/admin/config');
                     const json = await response.json();
 
                     return this.config = {
@@ -620,15 +670,22 @@
                                         }
                                     }
 
-                                    if (json.status && json.status === 'online') {
-                                        this.selectedClientConfig.status = 'online';
+                                    if (json.status) {
+                                        this.selectedClientConfig.status = json.status;
 
-                                        // This ensures we get the latest configuration after the client comes back online
-                                        await this.getClientConfiguration(this.selectedClient);
+                                        if (json.status === 'online') {
+                                            await this.getClientConfiguration(this.selectedClient);
+                                        }
                                     }
 
-                                    if (json.status && json.status === 'offline') {
-                                        this.selectedClientConfig.status = 'offline';
+                                    if (json.update_status) {
+                                        this.firmware.update_status = json.update_status;
+
+                                        if (json.update_status === 'updated' || json.update_status === 'failed') {
+                                            this.firmware.url = undefined;
+                                            this.firmware.size = undefined;
+                                            this.firmware.sha256 = undefined;
+                                        }
                                     }
                                 } catch (err) {
                                     console.log(err)
@@ -660,8 +717,6 @@
                         this.subscriptionActive = true;
 
                         console.log(`Successfully subscribed to ${topic}`);
-
-                        await this.getClientConfiguration(clientId);
                     } catch (err) {
                         console.log(`Subscription to ${topic} failed`, err);
 
@@ -725,6 +780,14 @@
                         github_ref: undefined,
                         is_offline: undefined,
                     };
+
+                    this.firmware = {
+                        url: undefined,
+                        size: undefined,
+                        sha256: undefined,
+                        is_valid_url: false,
+                        update_status: undefined,
+                    };
                 },
 
                 async getClientConfiguration() {
@@ -733,6 +796,58 @@
 
                 async triggerSoftwareUpdate(clientId) {
                     await this.sendCommand({command: 'update_code'});
+                },
+
+                async checkIfValidFirmwareUrl(event) {
+                    try {
+                        const url = new URL(event.target.value);
+
+                        if (url.hostname === 'micropython.org' && url.pathname.match(/^.*-OTA-.*\.app-bin$/)) {
+                            this.firmware.is_valid_url = true;
+                        } else {
+                            this.firmware.is_valid_url = false;
+                        }
+                    } catch (err) {
+                        this.firmware.is_valid_url = false;
+                    }
+                },
+
+                async triggerFirmwareUpdate(clientId) {
+                    try {
+                        this.firmware.update_in_progress = true;
+
+                        const response = await fetch('/api/admin/start-firmware-update', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                url: this.firmware.url,
+                            }),
+                        });
+
+                        if (response.status === 200) {
+                            const json = await response.json();
+
+                            this.firmware.sha256 = json.sha256;
+                            this.firmware.size = json.size;
+
+                            // Send the URL as the locally-saved one instead of downloading
+                            // it afresh again from micropython.org
+                            const { protocol, host } = new URL(window.location);
+
+                            await this.sendCommand({
+                                command: 'update_firmware',
+                                firmware: {
+                                    url: `${protocol}//${host}/firmware/${json.filename}`,
+                                    size: this.firmware.size,
+                                    sha256: this.firmware.sha256,
+                                }
+                            });
+                        }
+                    } catch (err) {
+                        console.log(err)
+                    }
                 },
 
                 async getSystemInfo() {

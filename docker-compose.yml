@@ -7,3 +7,4 @@ services:
     restart: unless-stopped
     volumes:
       - ./config.json:/opt/service/config.json
+      - ./firmware:/opt/service/firmware

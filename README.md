@@ -58,3 +58,5 @@ This repository also includes an admin UI to manage the ESP32s that are running 
 ```
 
 Each one specified here will show as a button in the UI and allow you to configure it.
+
+For over-the-air firmware updates, the board must initially be flashed with the "Support for OTA" firmware from the [MicroPython download page](https://micropython.org/download/) for your specific board.

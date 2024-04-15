@@ -504,7 +504,7 @@
                 <h4>Update firmware</h4>
 
                 <p class="small">
-                    Requires the URL of a <span class="font-monospace">.app.bin</span> firmware file from the <em>Firmware (Support for OTA)</em> section of the <a href="https://micropython.org/download/" target="_blank">MicroPython download page</a> for your specific board.
+                    Requires the URL of a <span class="font-monospace">.app-bin</span> firmware file from the "Firmware (Support for OTA)" section of the <a href="https://micropython.org/download/" target="_blank">MicroPython download page</a> for your specific board.
                 </p>
 
                 <form>
@@ -542,13 +542,24 @@
             <div class="mb-4">
                 <h4>Logs</h4>
 
-                <button
-                    type="button"
-                    class="btn btn-outline-primary mb-3"
-                    :disabled="inputsDisabled"
-                    @click="getSystemInfo(selectedClient)">
-                        Get system info
-                </button>
+                <div class="btn-group" role="group">
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary mb-3"
+                        :disabled="inputsDisabled"
+                        @click="getSystemInfo(selectedClient)">
+                            Get system info
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary mb-3"
+                        :disabled="inputsDisabled"
+                        @click="clearLogs">
+                            Clear logs
+                    </button>
+                </div>
+
 
                 <textarea class="form-control form-control-sm font-monospace logs-output" id="logs-output" rows="10" readonly :value="messages.join('\n')"></textarea>
         </div>
@@ -852,6 +863,10 @@
 
                 async getSystemInfo() {
                     await this.sendCommand({command: 'get_system_info'});
+                },
+
+                async clearLogs() {
+                    this.messages = [];
                 },
 
                 async updateConfig(configName) {

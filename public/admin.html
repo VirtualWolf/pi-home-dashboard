@@ -555,6 +555,14 @@
                         type="button"
                         class="btn btn-outline-primary mb-3"
                         :disabled="inputsDisabled"
+                        @click="restartBoard(selectedClient)">
+                            Restart board
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary mb-3"
+                        :disabled="inputsDisabled"
                         @click="clearLogs">
                             Clear logs
                     </button>
@@ -867,6 +875,10 @@
 
                 async clearLogs() {
                     this.messages = [];
+                },
+
+                async restartBoard(clientId) {
+                    await this.sendCommand({command: 'restart'})
                 },
 
                 async updateConfig(configName) {

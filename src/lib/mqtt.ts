@@ -76,7 +76,7 @@ export function subscribeToBroker() {
         }
 
         if (config.topics.airquality?.includes(topic)) {
-            // Air quality topics end in the form "/$LOCATION/weather"
+            // Air quality topics end in the form "/$LOCATION/airquality"
             const location = topic.split('/').slice(-2, -1).join();
 
             const index = airQualityData.findIndex(element => element.name === location);
@@ -92,6 +92,9 @@ export function subscribeToBroker() {
                 particles_2_5um: json.particles_2_5um,
                 particles_5_0um: json.particles_5_0um,
                 particles_10um: json.particles_10um,
+                aqi: json.aqi,
+                eco2: json.eco2,
+                tvoc: json.tvoc,
             });
         }
     });

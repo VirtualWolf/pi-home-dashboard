@@ -131,10 +131,17 @@
 
             methods: {
                 async fetchData() {
-                    const response = await fetch('/api');
-                    const json = await response.json();
+                    try {
+                        const response = await fetch('/api');
+                        const json = await response.json();
 
-                    return this.data = json;
+                        return this.data = json;
+                    } catch (err) {
+                        this.data[this.upperLocation].noUpdatesReceived = true;
+                        this.data[this.lowerLocation].noUpdatesReceived = true;
+                        this.data.power.noUpdatesReceived = true;
+                    }
+
                 },
 
                 checkIfDayTime() {

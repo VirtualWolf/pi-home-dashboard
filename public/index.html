@@ -3,46 +3,48 @@
         <title>Pi Home Dashboard</title>
         <script src="/js/vue.global.prod.min.js" lang="javascript"></script>
         <script src="/js/suncalc-1.9.0.js" lang="javascript"></script>
-        <script src="/js/scripts.js" lang="javascript"></script>
+        <script src="/js/check-time-of-day.js" lang="javascript"></script>
         <link rel="stylesheet" href="/css/style.css">
     </head>
 
     <body>
-        <div id="dashboard">
-            <div class="upper-temperature temperature" :class="{'no-updates-received': data[upperLocation].noUpdatesReceived}">
-                {{ data[upperLocation].temperature }}&deg;
-            </div>
+        <div id="app">
+            <div id="dashboard" :style="bodyText">
+                <div class="upper-temperature temperature" :class="{'no-updates-received': data[upperLocation].noUpdatesReceived}" :style="noUpdatesReceivedTextColour">
+                    {{ data[upperLocation].temperature }}&deg;
+                </div>
 
-            <div class="upper-humidity humidity" :class="{'no-updates-received': data[upperLocation].noUpdatesReceived}">
-                {{ data[upperLocation].humidity }}%
-            </div>
+                <div class="upper-humidity humidity" :class="{'no-updates-received': data[upperLocation].noUpdatesReceived}" :style="noUpdatesReceivedTextColour">
+                    {{ data[upperLocation].humidity }}%
+                </div>
 
-            <div class="lower-temperature temperature" :class="{'no-updates-received': data[lowerLocation].noUpdatesReceived}">
-                {{ data[lowerLocation].temperature }}&deg;
-            </div>
+                <div class="lower-temperature temperature" :class="{'no-updates-received': data[lowerLocation].noUpdatesReceived}" :style="noUpdatesReceivedTextColour">
+                    {{ data[lowerLocation].temperature }}&deg;
+                </div>
 
-            <div class="lower-humidity humidity" :class="{'no-updates-received': data[lowerLocation].noUpdatesReceived}">
-                {{ data[lowerLocation].humidity }}%
-            </div>
+                <div class="lower-humidity humidity" :class="{'no-updates-received': data[lowerLocation].noUpdatesReceived}" :style="noUpdatesReceivedTextColour">
+                    {{ data[lowerLocation].humidity }}%
+                </div>
 
-            <div class="consumption">
-                <div class="power-heading">Consumption</div>
-                <span :class="{'no-updates-received': data.power.noUpdatesReceived}">{{ data.power.consumption }}kW</span>
-            </div>
+                <div class="consumption">
+                    <div class="power-heading">Consumption</div>
+                    <span :class="{'no-updates-received': data.power.noUpdatesReceived}" :style="noUpdatesReceivedTextColour">{{ data.power.consumption }}kW</span>
+                </div>
 
-            <div class="production">
-                <div class="power-heading">Production</div>
-                <span :class="{'no-updates-received': data.power.noUpdatesReceived}">{{ data.power.production }}kW</span>
-            </div>
+                <div class="production">
+                    <div class="power-heading">Production</div>
+                    <span :class="{'no-updates-received': data.power.noUpdatesReceived}" :style="noUpdatesReceivedTextColour">{{ data.power.production }}kW</span>
+                </div>
 
-            <div class="battery-charge">
-                <div class="power-heading">Charge</div>
-                <span :class="{'no-updates-received': data.power.noUpdatesReceived}">
-                    <span
-                        v-if="!data.power.batteryChargeState.match(/—|idle/)"
-                        :class="chargeState"
-                        v-html="chargeSymbol"></span>{{ data.power.batteryChargePercentage }}%
-                </span>
+                <div class="battery-charge">
+                    <div class="power-heading">Charge</div>
+                    <span :class="{'no-updates-received': data.power.noUpdatesReceived}" :style="noUpdatesReceivedTextColour">
+                        <span
+                            v-if="!data.power.batteryChargeState.match(/—|idle/)"
+                            :class="chargeState"
+                            v-html="chargeSymbol"></span>{{ data.power.batteryChargePercentage }}%
+                    </span>
+                </div>
             </div>
         </div>
     </body>
@@ -51,6 +53,7 @@
         const Dashboard = {
             data() {
                 return {
+                    isDayTime: true,
                     upperLocation: 'outdoor',
                     lowerLocation: 'indoor',
                     data: {
@@ -87,6 +90,11 @@
                     this.lowerLocation = params.get('lower');
                 }
 
+                await getLocation();
+
+                this.checkIfDayTime()
+                setInterval(() => this.checkIfDayTime(), 60000);
+
                 await this.fetchData();
 
                 setInterval(async () => await this.fetchData(), 10000);
@@ -100,10 +108,24 @@
                         'no-updates-received': this.data.power.noUpdatesReceived,
                     }
                 },
+
                 chargeSymbol() {
                     return this.data.power.batteryChargeState === 'charging'
                         ? '<span class="battery-charge-state-icon">&#x2B06;</span>'
                         : '<span class="battery-charge-state-icon">&#x2B07;</span>';
+                },
+
+                bodyText() {
+                    return {
+                        color: this.isDayTime ? '#ffffff' : '#e9c996',
+                    }
+
+                },
+
+                noUpdatesReceivedTextColour() {
+                    return {
+                        '--no-updates-colour': this.isDayTime ? '#aaaaaa' : '#b08f5a',
+                    }
                 },
             },
 
@@ -113,10 +135,14 @@
                     const json = await response.json();
 
                     return this.data = json;
+                },
+
+                checkIfDayTime() {
+                    this.isDayTime = isDayTime();
                 }
             }
         }
 
-        Vue.createApp(Dashboard).mount('#dashboard')
+        Vue.createApp(Dashboard).mount('#app')
     </script>
 </html>

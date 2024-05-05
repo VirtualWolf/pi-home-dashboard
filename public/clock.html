@@ -3,15 +3,17 @@
         <title>Pi Home Dashboard Clock</title>
         <script src="/js/vue.global.prod.min.js" lang="javascript"></script>
         <script src="/js/suncalc-1.9.0.js" lang="javascript"></script>
-        <script src="/js/scripts.js" lang="javascript"></script>
+        <script src="/js/check-time-of-day.js" lang="javascript"></script>
         <link rel="stylesheet" href="/css/style.css">
     </head>
 
     <body>
-        <div id="clock">
-            <div class="hour">{{ hour }}</div>
-            <div class="divider">:</div>
-            <div class="minute">{{ minute }}</div>
+        <div id="app">
+            <div id="clock" :style="bodyText">
+                <div class="hour">{{ hour }}</div>
+                <div class="divider">:</div>
+                <div class="minute">{{ minute }}</div>
+            </div>
         </div>
     </body>
 
@@ -19,15 +21,30 @@
         const Clock = {
             data() {
                 return {
+                    isDayTime: true,
                     hour: '00',
                     minute: '00'
                 };
             },
 
-            mounted() {
+            async mounted() {
                 this.getCurrentTime();
 
                 setInterval(() => this.getCurrentTime(), 1000);
+
+                await getLocation();
+
+                this.checkIfDayTime()
+                setInterval(() => this.checkIfDayTime(), 60000);
+            },
+
+            computed: {
+                bodyText() {
+                    return {
+                        color: this.isDayTime ? '#ffffff' : '#e9c996',
+                    }
+
+                },
             },
 
             methods: {
@@ -39,10 +56,14 @@
 
                     this.hour = hour;
                     this.minute = minute;
+                },
+
+                checkIfDayTime() {
+                    this.isDayTime = isDayTime();
                 }
             }
         }
 
-        Vue.createApp(Clock).mount('#clock');
+        Vue.createApp(Clock).mount('#app');
     </script>
 </html>

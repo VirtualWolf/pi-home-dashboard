@@ -22,7 +22,9 @@ const client = connect({
 export function subscribeToBroker() {
     const topics: string[] = [];
 
-    topics.push(config.topics.displays);
+    if (config.topics.displays) {
+        topics.push(config.topics.displays);
+    }
 
     Object.keys(config.topics).forEach((type: string) => {
         Object.values(config.topics[type]).forEach((topic: any) => {

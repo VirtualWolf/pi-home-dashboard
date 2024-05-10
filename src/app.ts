@@ -5,7 +5,7 @@ import { Readable } from 'stream';
 import { finished } from 'stream/promises';
 import { ReadableStream } from 'stream/web'
 import express from 'express';
-import { subscribeToBroker, getCurrentData, setHyperPixelDisplayIsOn } from './lib/mqtt';
+import { subscribeToBroker, getCurrentData, toggleDisplays } from './lib/mqtt';
 const config = require('../config.json');
 
 const app = express();
@@ -74,8 +74,8 @@ app.post('/api/admin/start-firmware-update', async (req, res) => {
 
 });
 
-app.post('/api/hyperpixel', async(req, res) => {
-    setHyperPixelDisplayIsOn(req.body.is_on);
+app.post('/api/displays', async(req, res) => {
+    toggleDisplays();
 
     return res.status(204).send();
 });

@@ -8,6 +8,7 @@ const config = require('../../config.json');
 const weatherData = new Array<Weather>();
 const airQualityData = new Array<AirQuality>();
 const powerData = new Array<Power>();
+let displaysOn = true;
 
 const client = connect({
     servers: [{
@@ -20,6 +21,8 @@ const client = connect({
 
 export function subscribeToBroker() {
     const topics: string[] = [];
+
+    topics.push(config.topics.displays);
 
     Object.keys(config.topics).forEach((type: string) => {
         Object.values(config.topics[type]).forEach((topic: any) => {
@@ -49,6 +52,10 @@ export function subscribeToBroker() {
         log(`Message received on topic ${topic}: ${message.toString()}`, 'DEBUG');
 
         const json = JSON.parse(message.toString());
+
+        if (topic === config.topics.displays) {
+            displaysOn = json.is_on;
+        }
 
         if (config.topics.weather?.includes(topic)) {
             // Weather topics end in the form "/$LOCATION/weather"
@@ -122,17 +129,17 @@ export function getCurrentData() {
     return allData;
 }
 
-export function setHyperPixelDisplayIsOn(is_on: boolean) {
-    const payload = JSON.stringify({is_on});
+export function toggleDisplays() {
+    const payload = JSON.stringify({is_on: !displaysOn});
 
-    client.publish(config.topics.hyperpixel, payload, {
+    client.publish(config.topics.displays, payload, {
         qos: 2,
         retain: true,
     }, (err: any) => {
         if (err) {
             log(err.message);
         } else {
-            log(`Message successfully sent to ${config.topics.hyperpixel}: ${payload}`);
+            log(`Message successfully sent to ${config.topics.displays}: ${payload}`);
         }
     });
 }

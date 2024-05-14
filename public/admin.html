@@ -699,6 +699,31 @@
 
             <hr>
 
+            <!-- REPLACE CONFIG -->
+            <div>
+                <h4>Replace configuration</h4>
+
+                <p class="small">
+                    Replace the <em>entire</em> JSON configuration of the selected board all in one go. At minimum it requires <span class="font-monospace">ssid</span>, <span class="font-monospace">wifi_pw</span>, <span class="font-monospace">server</span>, <span class="font-monospace">port</span>, and <span class="font-monospace">client_id</span> to be set.
+                </p>
+
+                <textarea
+                    class="form-control form-control-sm font-monospace logs-output mb-3" id="replacement-configuration"
+                    rows="3"
+                    v-model="replacementConfiguration.config"
+                    @input="isConfigurationValidJson"></textarea>
+
+                <button
+                    type="button"
+                    class="btn btn-outline-danger"
+                    :disabled="inputsDisabled || !replacementConfiguration.isValidJson"
+                    @click="replaceConfiguration">
+                        Replace configuration
+                </button>
+            </div>
+
+            <hr>
+
             <!-- LOGS -->
             <div>
                 <h4>Logs</h4>
@@ -729,7 +754,7 @@
                     </button>
                 </div>
 
-                <textarea class="form-control form-control-sm font-monospace logs-output" id="logs-output" rows="10" readonly :value="messages.join('\n')"></textarea>
+                <textarea class="form-control form-control-sm font-monospace logs-output mb-3" id="logs-output" rows="10" readonly :value="messages.join('\n')"></textarea>
             </div>
 
         <script lang="javascript" src="/js/admin.js"></script>

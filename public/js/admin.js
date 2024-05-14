@@ -42,6 +42,10 @@ const Admin = {
                 is_valid_url: false,
                 update_status: undefined,
             },
+            replacementConfiguration: {
+                config: '',
+                isValidJson: false,
+            }
         };
     },
 
@@ -234,6 +238,11 @@ const Admin = {
                 is_valid_url: false,
                 update_status: undefined,
             };
+
+            this.replacementConfiguration = {
+                config: '',
+                isValidJson: false,
+            };
         },
 
         async getClientConfiguration() {
@@ -323,6 +332,32 @@ const Admin = {
             } catch (err) {
                 console.log(err)
             }
+        },
+
+        async isConfigurationValidJson(event) {
+            try {
+                const json = await JSON.parse(event.target.value);
+
+                if (!json.client_id && !json.server && !json.port && !json.ssid && !json.wifi_pw) {
+                    this.replacementConfiguration.isValidJson = false;
+
+                    return;
+                } else {
+                    this.replacementConfiguration.isValidJson = true;
+                }
+            } catch (err) {
+                this.replacementConfiguration.isValidJson = false;
+            }
+        },
+
+        async replaceConfiguration() {
+            await this.sendCommand({
+                command: 'replace_config',
+                config: JSON.parse(this.replacementConfiguration.config),
+            });
+
+            this.replacementConfiguration.config = '';
+            this.replacementConfiguration.isValidJson = false;
         },
 
         async getSystemInfo() {

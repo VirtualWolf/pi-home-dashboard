@@ -388,64 +388,6 @@
                         </div>
                     </form>
                 </div>
-
-                <div>
-                    <h5>Legacy single sensor configuration</h5>
-
-                    <form>
-                        <div class="row">
-
-                            <!-- SENSOR TYPE -->
-                            <div class="col-lg">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text" id="sensor_type_description">Sensor type</span>
-                                    <select
-                                        class="form-select"
-                                        name="sensor_type"
-                                        id="sensor_type"
-                                        aria-label="Sensor type"
-                                        aria-describedby="sensor_type_description"
-                                        v-model="selectedClientConfig.sensor_type"
-                                        :disabled="inputsDisabled">
-                                            <option v-for="option in sensorTypes" :value="option.value">
-                                                {{ option.text }}
-                                            </option>
-                                    </select>
-                                    <button
-                                        type="button"
-                                        class="btn btn-outline-primary"
-                                        :disabled="inputsDisabled"
-                                        @click="updateConfig('sensor_type')">
-                                            Update
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- RX PIN -->
-                            <div class="col-lg">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text" id="rx_pin_description">RX pin</span>
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        id="rx_pin"
-                                        aria-label="TX pin"
-                                        aria-describedby="rx_pin_description"
-                                        v-model="selectedClientConfig.rx_pin"
-                                        :disabled="inputsDisabled"
-                                        :placeholder="hidePlaceholderText ? '' : 26">
-                                    <button
-                                        type="button"
-                                        class="btn btn-outline-primary"
-                                        :disabled="inputsDisabled"
-                                        @click="updateConfig('rx_pin')">
-                                            Update
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
             </div>
 
             <hr>

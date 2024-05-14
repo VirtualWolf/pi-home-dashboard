@@ -10,15 +10,11 @@ const Admin = {
                 server: undefined,
                 port: undefined,
                 client_id: undefined,
-                topic: undefined,
                 ntp_server: undefined,
                 sensors: [],
-                sensor_type: undefined,
-                rx_pin: undefined,
                 sda_pin: undefined,
                 scl_pin: undefined,
                 disable_watchdog: false,
-                enable_bme280_additional_data: true,
                 github_token: undefined,
                 github_username: undefined,
                 github_repository: undefined,
@@ -111,12 +107,6 @@ const Admin = {
 
                             if (json.config) {
                                 this.selectedClientConfig = json.config;
-
-                                // The default setting for the ESP32 code is to enable additional data unless it's
-                                //  explicitly turned off, so we need to make the toggle match that default state
-                                if (json.config.enable_bme280_additional_data === undefined) {
-                                    this.selectedClientConfig.enable_bme280_additional_data = true;
-                                }
                             }
 
                             if (json.status) {
@@ -216,14 +206,11 @@ const Admin = {
                 server: undefined,
                 port: undefined,
                 client_id: undefined,
-                topic: undefined,
                 ntp_server: undefined,
                 sensors: [],
-                rx_pin: undefined,
                 sda_pin: undefined,
                 scl_pin: undefined,
                 disable_watchdog: false,
-                enable_bme280_additional_data: true,
                 github_username: undefined,
                 github_token: undefined,
                 github_repository: undefined,
@@ -278,7 +265,7 @@ const Admin = {
             });
         },
 
-        async triggerSoftwareUpdate(clientId) {
+        async triggerSoftwareUpdate() {
             await this.sendCommand({command: 'update_code'});
         },
 
@@ -296,7 +283,7 @@ const Admin = {
             }
         },
 
-        async triggerFirmwareUpdate(clientId) {
+        async triggerFirmwareUpdate() {
             try {
                 this.firmware.update_in_progress = true;
 
@@ -368,7 +355,7 @@ const Admin = {
             this.messages = [];
         },
 
-        async restartBoard(clientId) {
+        async restartBoard() {
             await this.sendCommand({command: 'restart'})
         },
 

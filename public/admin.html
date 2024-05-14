@@ -204,28 +204,6 @@
                             </button>
                         </div>
                     </div>
-
-                    <!-- LEGACY MQTT TOPIC -->
-                    <div class="col-lg" v-if="selectedClientConfig.sensors === undefined">
-                        <div class="input-group mb-3 text-end">
-                            <span class="input-group-text" id="topic_description">Topic</span>
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="topic"
-                                aria-label="Topic"
-                                aria-describedby="topic_description"
-                                v-model="selectedClientConfig.topic"
-                                :disabled="inputsDisabled">
-                            <button
-                                type="button"
-                                class="btn btn-outline-primary"
-                                :disabled="inputsDisabled"
-                                @click="updateConfig('topic')">
-                                    Update
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -689,7 +667,7 @@
                     type="button"
                     class="btn btn-outline-danger"
                     :disabled="updateFirmwareButtonDisabled"
-                    @click="triggerFirmwareUpdate(selectedClient)">
+                    @click="triggerFirmwareUpdate">
                         Update firmware
                         <span class="spinner-border spinner-border-sm" role="status" v-if="firmware.update_status === 'updating'">
                             <span class="visually-hidden">Loading...</span>
@@ -733,7 +711,7 @@
                         type="button"
                         class="btn btn-outline-primary mb-3"
                         :disabled="inputsDisabled"
-                        @click="getSystemInfo(selectedClient)">
+                        @click="getSystemInfo">
                             Get system info
                     </button>
 
@@ -741,7 +719,7 @@
                         type="button"
                         class="btn btn-outline-primary mb-3"
                         :disabled="inputsDisabled"
-                        @click="restartBoard(selectedClient)">
+                        @click="restartBoard">
                             Restart board
                     </button>
 

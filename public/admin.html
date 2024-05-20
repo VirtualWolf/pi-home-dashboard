@@ -420,6 +420,76 @@
                                 </button>
                             </div>
                         </div>
+
+                        <!-- LED PIN -->
+                        <div class="col-lg">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="led_pin_description">LED pin</span>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="led_pin"
+                                    aria-label="LED pin"
+                                    aria-describedby="led_pin_description"
+                                    v-model="selectedClientConfig.led_pin"
+                                    :disabled="inputsDisabled"
+                                    :placeholder="hidePlaceholderText ? '' : '13'">
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-primary"
+                                    :disabled="inputsDisabled"
+                                    @click="updateConfig('led_pin')">
+                                        Update
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <!-- NEOPIXEL PIN -->
+                        <div class="col-lg">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="neopixel_pin_description">NeoPixel pin</span>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="neopixel_pin"
+                                    aria-label="NeoPixel pin"
+                                    aria-describedby="neopixel_pin_description"
+                                    v-model="selectedClientConfig.neopixel_pin"
+                                    :disabled="inputsDisabled">
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-primary"
+                                    :disabled="inputsDisabled"
+                                    @click="updateConfig('neopixel_pin')">
+                                        Update
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- NEOPIXEL POWER PIN -->
+                        <div class="col-lg">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="neopixel_power_pin_description">NeoPixel power pin</span>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="neopixel_power_pin"
+                                    aria-label="NeoPixel power pin"
+                                    aria-describedby="neopixel_power_pin_description"
+                                    v-model="selectedClientConfig.neopixel_power_pin"
+                                    :disabled="inputsDisabled">
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-primary"
+                                    :disabled="inputsDisabled"
+                                    @click="updateConfig('neopixel_power_pin')">
+                                        Update
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </form>
 

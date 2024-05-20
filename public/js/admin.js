@@ -14,6 +14,9 @@ const Admin = {
                 sensors: [],
                 sda_pin: undefined,
                 scl_pin: undefined,
+                led_pin: undefined,
+                neopixel_pin: undefined,
+                neopixel_power_pin: undefined,
                 disable_watchdog: false,
                 github_token: undefined,
                 github_username: undefined,
@@ -210,6 +213,9 @@ const Admin = {
                 sensors: [],
                 sda_pin: undefined,
                 scl_pin: undefined,
+                led_pin: undefined,
+                neopixel_pin: undefined,
+                neopixel_power_pin: undefined,
                 disable_watchdog: false,
                 github_username: undefined,
                 github_token: undefined,
@@ -257,10 +263,22 @@ const Admin = {
         },
 
         updateSensorConfig() {
+            const sensors = this.selectedClientConfig.sensors.map(sensor => {
+                return {
+                    ...sensor,
+                    i2c_address: sensor.i2c_address
+                        ? parseInt(sensor.i2c_address)
+                        : undefined,
+                    rx_pin: sensor.rx_pin
+                        ? parseInt(sensor.rx_pin)
+                        : undefined,
+                }
+            });
+
             this.sendCommand({
                 command: 'update_config',
                 config: {
-                    sensors: this.selectedClientConfig.sensors
+                    sensors,
                 }
             });
         },
@@ -360,10 +378,14 @@ const Admin = {
         },
 
         async updateConfig(configName) {
+            shouldBeIntegers = ['sda_pin', 'scl_pin', 'led_pin', 'neopixel_pin', 'neopixel_power_pin'];
+
             payload = {
                 command: 'update_config',
                 config: {
-                    [configName]: this.selectedClientConfig[configName],
+                    [configName]: shouldBeIntegers.includes(configName) && this.selectedClientConfig[configName] !== ''
+                        ? parseInt(this.selectedClientConfig[configName])
+                        : this.selectedClientConfig[configName],
                 }
             };
 

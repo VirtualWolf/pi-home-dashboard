@@ -22,12 +22,8 @@ const client = connect({
 export function subscribeToBroker() {
     const topics: string[] = [];
 
-    if (config.topics.displays) {
-        topics.push(config.topics.displays);
-    }
-
-    Object.keys(config.topics).forEach((type: string) => {
-        Object.values(config.topics[type]).forEach((topic: any) => {
+    for (const [type, topicList] of Object.entries(config.topics) as [string, string[]][]) {
+        topicList.forEach(topic => {
             topics.push(topic);
 
             if (type === 'weather') {
@@ -46,16 +42,16 @@ export function subscribeToBroker() {
                 powerData.push(new Power());
             }
         });
-    });
+    }
 
-    client.subscribe(Object.values(topics), {qos: 1});
+    client.subscribe(topics, { qos: 1 });
 
     client.on('message', (topic, message) => {
         log(`Message received on topic ${topic}: ${message.toString()}`, 'DEBUG');
 
         const json = JSON.parse(message.toString());
 
-        if (topic === config.topics.displays) {
+        if (config.topics.displays?.includes(topic)) {
             displaysOn = json.is_on;
         }
 
@@ -134,14 +130,16 @@ export function getCurrentData() {
 export function toggleDisplays() {
     const payload = JSON.stringify({is_on: !displaysOn});
 
-    client.publish(config.topics.displays, payload, {
-        qos: 2,
-        retain: true,
-    }, (err: any) => {
-        if (err) {
-            log(err.message);
-        } else {
-            log(`Message successfully sent to ${config.topics.displays}: ${payload}`);
-        }
+    config.topics.displays.forEach((topic: string) => {
+        client.publish(topic, payload, {
+            qos: 2,
+            retain: true,
+        }, (err: any) => {
+            if (err) {
+                log(err.message);
+            } else {
+                log(`Message successfully sent to ${config.topics.displays}: ${payload}`);
+            }
+        });
     });
 }

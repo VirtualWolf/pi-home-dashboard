@@ -34,14 +34,20 @@ export class Weather {
 
     updateCurrentData = ({timestamp, temperature, humidity, dew_point, pressure}: {timestamp: number, temperature: number, humidity: number, dew_point?: number, pressure?: number}) => {
         this.timestamp = timestamp;
-        this.temperature = temperature.toFixed(1);
-        this.humidity = humidity.toFixed(0);
-        this.dew_point = dew_point
-            ? dew_point.toFixed(1)
-            : undefined,
-        this.pressure = pressure
-            ? pressure.toFixed(0)
-            : undefined,
+
+        if (temperature && humidity) {
+            this.temperature = temperature.toFixed(1);
+            this.humidity = humidity.toFixed(0);
+        }
+
+        if (dew_point) {
+            this.dew_point = dew_point.toFixed(1);
+        }
+
+        if (pressure) {
+            this.pressure = pressure.toFixed(0);
+        }
+
         this.noUpdatesReceived = false;
     }
 

@@ -31,6 +31,7 @@ const Admin = {
             sensorTypes: [
                 {text: 'DHT22', value: 'dht22'},
                 {text: 'BME280', value: 'bme280'},
+                {text: 'SHT30', value: 'sht30'},
                 {text: 'PMS5003', value: 'pms5003'},
                 {text: 'ENS160', value: 'ens160'},
             ],

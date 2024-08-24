@@ -13,6 +13,9 @@
         ],
         "power": [
             "home/power"
+        ],
+        "displays": [
+            "automation/displays"
         ]
     },
     "location": {

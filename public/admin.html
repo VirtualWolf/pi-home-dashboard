@@ -306,10 +306,10 @@
                                     </div>
                                 </div>
 
-                                <div class="row">
+                                <div class="row" v-if="sensor.type === 'bme280' || sensor.type === 'sht30' || sensor.type === 'ens160'">
 
                                     <!-- I2C ADDRESS -->
-                                    <div class="col-lg" v-if="sensor.type === 'bme280' || sensor.type === 'ens160'">
+                                    <div class="col-lg">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text" :id="`i2c_address_${index}_description`">I2C address</span>
                                             <input
@@ -335,14 +335,28 @@
                                                 role="switch"
                                                 :id="`enable_additional_data_${index}`"
                                                 v-model="selectedClientConfig.sensors[index].enable_additional_data"
-                                                :disabled="inputsDisabled">
+                                                :disabled="inputsDisabled || selectedClientConfig.sensors[index].enable_pressure_only === true">
                                             <label class="form-check-label" :for="`enable_additional_data_${index}`">Enable additional data</label>
+                                        </div>
+                                    </div>
+
+                                    <!-- SEND BME280 ATMOSPHERIC PRESSURE ONLY -->
+                                    <div class="col-lg" v-if="sensor.type === 'bme280'">
+                                        <div class="mb-3 form-check form-switch">
+                                            <input
+                                                class="form-check-input"
+                                                type="checkbox"
+                                                role="switch"
+                                                :id="`enable_pressure_only_${index}`"
+                                                v-model="selectedClientConfig.sensors[index].enable_pressure_only"
+                                                :disabled="inputsDisabled">
+                                            <label class="form-check-label" :for="`enable_pressure_only_${index}`">Enable atmospheric pressure only</label>
                                         </div>
                                     </div>
 
                                     <!-- RX PIN -->
                                     <div class="col-lg" v-if="sensor.type === 'dht22' || sensor.type === 'pms5003'">
-                                        <div class="input-group mb-3">
+                                        <div class="input-group">
                                             <span class="input-group-text" :id="`rx_pin_${index}_description`">RX pin</span>
                                             <input
                                                 type="text"
@@ -352,6 +366,20 @@
                                                 :aria-describedby="`rx_pin_${index}_description`"
                                                 v-model="selectedClientConfig.sensors[index].rx_pin"
                                                 :disabled="inputsDisabled">
+                                        </div>
+                                    </div>
+
+                                    <!-- ENABLE DEW POINT -->
+                                    <div class="col-lg d-flex align-items-center" v-if="sensor.type === 'dht22' || sensor.type === 'sht30'">
+                                        <div class="form-check form-switch">
+                                            <input
+                                                class="form-check-input"
+                                                type="checkbox"
+                                                role="switch"
+                                                :id="`enable_dew_point_${index}`"
+                                                v-model="selectedClientConfig.sensors[index].enable_dew_point"
+                                                :disabled="inputsDisabled">
+                                            <label class="form-check-label" :for="`enable_dew_point${index}`">Enable dew point calculation</label>
                                         </div>
                                     </div>
 
@@ -505,19 +533,6 @@
                             :disabled="inputsDisabled"
                             @change="updateConfig('disable_watchdog')">
                         <label class="form-check-label" for="disable_watchdog">Disable watchdog timer</label>
-                    </div>
-
-                    <!-- ENABLE BME280 ADDITIONAL DATA -->
-                    <div class="mb-3 form-check form-switch" v-if="selectedClientConfig.sensors === undefined">
-                        <input
-                            class="form-check-input"
-                            type="checkbox"
-                            role="switch"
-                            id="enable_bme280_additional_data"
-                            v-model="selectedClientConfig.enable_bme280_additional_data"
-                            :disabled="inputsDisabled"
-                            @change="updateConfig('enable_bme280_additional_data')">
-                        <label class="form-check-label" for="enable_bme280_additional_data">Enable BME 280 additional data</label>
                     </div>
                 </form>
             </div>

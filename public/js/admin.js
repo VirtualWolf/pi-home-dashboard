@@ -34,6 +34,7 @@ const Admin = {
                 {text: 'SHT30', value: 'sht30'},
                 {text: 'PMS5003', value: 'pms5003'},
                 {text: 'ENS160', value: 'ens160'},
+                {text: 'VL53L1X', value: 'vl53l1x'},
             ],
             firmware: {
                 url: undefined,
@@ -272,6 +273,12 @@ const Admin = {
                         : undefined,
                     rx_pin: sensor.rx_pin
                         ? parseInt(sensor.rx_pin)
+                        : undefined,
+                    trigger_threshold_mm: sensor.trigger_threshold_mm
+                        ? parseInt(sensor.trigger_threshold_mm)
+                        : undefined,
+                    ignore_trigger_period: sensor.ignore_trigger_period
+                        ? parseInt(sensor.ignore_trigger_period)
                         : undefined,
                 }
             });

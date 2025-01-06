@@ -306,7 +306,7 @@
                                     </div>
                                 </div>
 
-                                <div class="row" v-if="sensor.type === 'bme280' || sensor.type === 'sht30' || sensor.type === 'ens160'">
+                                <div class="row" v-if="sensor.type === 'bme280' || sensor.type === 'sht30' || sensor.type === 'ens160' || sensor.type === 'vl53l1x' ">
 
                                     <!-- I2C ADDRESS -->
                                     <div class="col-lg">
@@ -324,6 +324,7 @@
                                     </div>
                                 </div>
 
+                                <!-- ADDITIONAL PER-SENSOR OPTIONS -->
                                 <div class="row">
 
                                     <!-- ENABLE BME280 ADDITIONAL DATA -->
@@ -383,12 +384,43 @@
                                         </div>
                                     </div>
 
+                                    <!-- VL53L1X TRIGGER THRESHOLD -->
+                                    <div class="col-lg" v-if="sensor.type === 'vl53l1x'">
+                                        <div class="input-group mb-3 text-end">
+                                            <span class="input-group-text" :id="`trigger_threshold_mm_description_${index}`">Trigger threshold in millimetres</span>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                :id="`trigger_threshold_mm_${index}`"
+                                                aria-label="Trigger threshold in millimetres"
+                                                :aria-describedby="`trigger_threshold_mm_description_${index}`"
+                                                v-model="selectedClientConfig.sensors[index].trigger_threshold_mm"
+                                                :disabled="inputsDisabled">
+                                        </div>
+                                    </div>
+
+                                    <!-- VL53L1X IGNORE TRIGGER PERIOD -->
+                                    <div class="col-lg" v-if="sensor.type === 'vl53l1x'">
+                                        <div class="input-group mb-3 text-end">
+                                            <span class="input-group-text" :id="`ignore_trigger_period_description_${index}`">Ignore trigger period in seconds</span>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                :id="`ignore_trigger_period_${index}`"
+                                                aria-label="Ignore trigger period in seconds"
+                                                :aria-describedby="`ignore_trigger_period_description_${index}`"
+                                                v-model="selectedClientConfig.sensors[index].ignore_trigger_period"
+                                                :disabled="inputsDisabled">
+                                        </div>
+                                    </div>
+
                                     <!-- REMOVE SENSOR BUTTON -->
                                     <div class="col-lg text-end">
                                         <button
                                         type="button"
                                         class="btn btn-outline-danger"
-                                        @click="removeSensor(index)">
+                                        @click="removeSensor(index)"
+                                        :disabled="inputsDisabled">
                                             Remove sensor
                                         </button>
                                     </div>
